@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Screens/MainScreen/pages/HomePage.dart';
 import 'package:flutter_app/Screens/Signup/SignUp.dart';
 import 'package:flutter_app/components/RoundedButton.dart';
 import 'package:flutter_app/components/RoundedPasswordFeild.dart';
@@ -69,7 +70,7 @@ class Body extends StatelessWidget {
                           );
                         }
                         else{
-                          login();
+                          login(context);
                         }
                       },
                   ),
@@ -103,11 +104,19 @@ class Body extends StatelessWidget {
     );
   }
 
-  void login(){
+  void login(BuildContext context){
     print("Dang Ky");
+    Navigator.push(
+      context, 
+      MaterialPageRoute(
+        builder: (context) {
+          return HomePage();
+        },
+      )
+    );
   }
 
   bool isEmpty(){
-    return true;
+    return false;
   }
 }
