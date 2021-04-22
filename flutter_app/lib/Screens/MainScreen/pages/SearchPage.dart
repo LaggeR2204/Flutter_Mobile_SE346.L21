@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -6,10 +7,33 @@ class SearchPage extends StatefulWidget {
 }
 
 class SearchPageState extends State<SearchPage> {
+  final double appBarHeight = AppBar().preferredSize.height;
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("Search page"),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Container(
+          height: appBarHeight * 0.8,
+          margin: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: appPrimaryLightColor,
+            borderRadius:  BorderRadius.circular(29),
+          ),
+          child: TextField(
+            cursorColor: appPrimaryColor,
+            decoration: InputDecoration(
+              hintStyle: TextStyle(fontSize: appBarHeight * 0.3),
+              hintText: 'Search',
+              suffixIcon: Icon(Icons.search),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(left: 15, bottom: 10, top: 10, right: 15),
+            ),
+          ),
+        ),
+      ),
+      body: Center(child: Text("Search Page"),),
     );
   }
 }

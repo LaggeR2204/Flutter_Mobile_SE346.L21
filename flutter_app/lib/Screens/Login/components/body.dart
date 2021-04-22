@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/HomePage.dart';
 import 'package:flutter_app/Screens/Signup/SignUp.dart';
@@ -24,11 +25,12 @@ class Body extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: size.height * 0.05,),
-                  Text("Welcome back!", style: TextStyle(fontSize: 40, color: Colors.black),),
+                  Text("Welcome back!", style: TextStyle(fontSize: size.height * 0.05, color: Colors.black),),
                   SizedBox(height: size.height * 0.05,),
                   TextFieldContainer(
                     child: RoundedTextField(
                       icon: Icons.email,
+                      controller: emailController,
                       hintText: "Email",
                       onChanged: (value){},
                     ),
@@ -36,6 +38,7 @@ class Body extends StatelessWidget {
                   TextFieldContainer(
                     child: RoundedPasswordField(
                       hintText: "Password",
+                      controller: passwordController,
                       onChanged: (value){},
                     ),
                   ),
@@ -96,6 +99,7 @@ class Body extends StatelessWidget {
                       ),
                     ],
                   ),
+                  SizedBox(height: size.height * 0.05,),
                 ],
               ),
             ),
@@ -104,19 +108,57 @@ class Body extends StatelessWidget {
     );
   }
 
+  TextEditingController emailController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   void login(BuildContext context){
-    print("Dang Ky");
-    Navigator.push(
-      context, 
-      MaterialPageRoute(
-        builder: (context) {
-          return HomePage();
-        },
-      )
-    );
+    LoginWithFirebase(context,emailController.value.text, passwordController.value.text);
+    
   }
 
   bool isEmpty(){
-    return false;
+    if (emailController.value != null && passwordController.value != null)
+      return false;
+    return true;
+  }
+
+  void LoginWithFirebase(BuildContext context, String _email, String _password) async {
+    //Dang nhap voi firebase
+    print("[ACC] " + _email + " " + _password);
+    try {
+      final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+        email: _email,
+        password: _password,
+      )).user;
+      if (user != null){
+        if(user.isEmailVerified){ 
+          Navigator.push(
+            context, 
+            MaterialPageRoute(
+              builder: (context) {
+                return HomePage();
+              },
+            )
+          );
+        }
+        else{
+          print("[ERROR] Verify email"); 
+        }
+      }
+      else{
+        print("[ERROR] Null user"); 
+      }
+    } catch (e) {
+      print("[ERROR] " + e.code);
+      if (e.code == "ERROR_WRONG_PASSWORD") {
+        passwordController.clear();
+      } else if (e.code == "ERROR_USER_NOT_FOUND"){
+        passwordController.clear();
+        emailController.clear();
+      }
+    }
+    
   }
 }

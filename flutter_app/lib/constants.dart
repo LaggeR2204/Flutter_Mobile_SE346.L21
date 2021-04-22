@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
-const appPrimaryColor = Color(0xFF6F35A5);
+String appName = "LevArtGram";
+const appPrimaryColor = Color(0xffff008e);
+const appPrimaryColor2 = Color(0xffb8006f);
 const appPrimaryLightColor = Color(0xFFF1E6FF);
 

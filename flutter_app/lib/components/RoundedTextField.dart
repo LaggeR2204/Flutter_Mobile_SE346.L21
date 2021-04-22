@@ -4,11 +4,13 @@ import 'package:flutter_app/constants.dart';
 
 class RoundedTextField extends StatelessWidget {
   final String hintText;
+  final TextEditingController controller;
   final IconData icon;
   final ValueChanged<String> onChanged;
   const RoundedTextField({
     Key key,
     this.hintText,
+    this.controller,
     this.icon = Icons.person,
     this.onChanged,
   }) : super(key: key);
@@ -17,6 +19,7 @@ class RoundedTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFieldContainer(
       child: TextField(
+        controller: controller,
         onChanged: onChanged,
         cursorColor: appPrimaryColor,
         decoration: InputDecoration(

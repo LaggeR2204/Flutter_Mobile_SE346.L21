@@ -4,10 +4,12 @@ import 'package:flutter_app/constants.dart';
 
 class RoundedPasswordField extends StatefulWidget{
   final String hintText;
+  final TextEditingController controller;
   final ValueChanged<String> onChanged;
 
   const RoundedPasswordField({
     Key key,
+    this.controller,
     this.hintText,
     this.onChanged,
   }): super(key: key);
@@ -26,6 +28,7 @@ class RoundedPasswordFieldState extends State<RoundedPasswordField> {
     
     return TextFieldContainer(
       child: TextField(
+        controller: widget.controller,
         onChanged: widget.onChanged,
         obscureText: _isHidden,
         cursorColor: appPrimaryColor,
@@ -35,13 +38,13 @@ class RoundedPasswordFieldState extends State<RoundedPasswordField> {
             Icons.lock,
             color: appPrimaryColor,
           ),
-          suffix: InkWell(
-            onTap: (){
+          suffixIcon: IconButton(
+            onPressed: (){
               setState(() {
                 _isHidden = !_isHidden;
               });
             },
-            child: Icon(
+            icon: Icon(
               _isHidden 
               ? Icons.visibility 
               : Icons.visibility_off,
