@@ -47,7 +47,7 @@ class Body extends StatelessWidget {
                       //
                     },
                     child: Text(
-                      "Foggot Password?",
+                      "Forgot Password?",
                       style: TextStyle(color: appPrimaryColor),
                     ),
                   ),
