@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants.dart';
 
 class NotificationsPage extends StatefulWidget {
   @override
@@ -13,6 +14,18 @@ class NotificationsPageState extends State<NotificationsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: <Color>[
+                appPrimaryColor,
+                appPrimaryColor2
+              ],
+            ),
+          ),
+        ),
         automaticallyImplyLeading: false,
         title: Text("Notifications"),
         actions: [

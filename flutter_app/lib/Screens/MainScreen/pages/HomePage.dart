@@ -3,7 +3,7 @@ import 'package:flutter_app/Screens/MainScreen/pages/NotificationsPage.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/ProfilePage.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/SearchPage.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/TimelinePage.dart';
-import 'package:flutter_app/Screens/MainScreen/pages/UploadPage.dart';
+import 'package:flutter_app/Screens/MainScreen/pages/MessengerPage.dart';
 import 'package:flutter_app/constants.dart';
 
 class NavigationItem {
@@ -15,7 +15,7 @@ class NavigationItem {
 const List<NavigationItem> allNavigationItems = <NavigationItem>[
   NavigationItem('Home', Icons.home),
   NavigationItem('Search', Icons.search),
-  NavigationItem('Upload', Icons.add_box),
+  NavigationItem('Message', Icons.message_rounded),
   NavigationItem('Notification', Icons.notifications),
   NavigationItem('Profile', Icons.person)
 ];
@@ -31,7 +31,7 @@ class HomePageState extends State<HomePage> {
   List<Widget> _listPage = [
     TimelinePage(),
     SearchPage(),
-    UploadPage(),
+    MessengerPage(),
     NotificationsPage(),
     ProfilePage()
   ];

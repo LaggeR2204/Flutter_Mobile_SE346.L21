@@ -104,6 +104,7 @@ class Body extends StatelessWidget {
                       Text("Already an account? "),
                       GestureDetector(
                         onTap: () {
+                          Navigator.pop(context);
                           Navigator.push(
                             context, 
                             MaterialPageRoute(
@@ -161,24 +162,85 @@ class Body extends StatelessWidget {
       UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
       userUpdateInfo.displayName = _username;
       user.updateProfile(userUpdateInfo).then((onValue) {
-        Firestore.instance.collection('users').document().setData(
+        Firestore.instance.collection('users').document(user.uid).setData(
           {'email': _email, 'displayName': _username}).then((onValue) {
 
           });
       });
+
+      showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("Sign up success, verify your email before login"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
     }
     catch (error) {
       if (error.code == "ERROR_INVALID_EMAIL") {
+        showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("Invalid email"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
         emailController.clear();
         usernameController.clear();
         passwordController.clear();
         repeatPasswordController.clear();
       } else if (error.code == "ERROR_EMAIL_ALREADY_IN_USE") {
+        showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("Email already in use"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
         emailController.clear();
         usernameController.clear();
         passwordController.clear();
         repeatPasswordController.clear();
       } else if (error.code == "ERROR_WEAK_PASSWORD") {
+        showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("Your password is too weak"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
         passwordController.clear();
         repeatPasswordController.clear();
       } else {

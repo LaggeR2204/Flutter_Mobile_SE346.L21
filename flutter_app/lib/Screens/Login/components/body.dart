@@ -83,6 +83,7 @@ class Body extends StatelessWidget {
                       Text("Don't have an account? "),
                       GestureDetector(
                         onTap: () {
+                          Navigator.pop(context);
                           Navigator.push(
                             context, 
                             MaterialPageRoute(
@@ -134,17 +135,34 @@ class Body extends StatelessWidget {
       )).user;
       if (user != null){
         if(user.isEmailVerified){ 
-          Navigator.push(
+          //Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(
             context, 
             MaterialPageRoute(
               builder: (context) {
                 return HomePage();
               },
-            )
+            ),
+            (route) => false
           );
         }
         else{
           print("[ERROR] Verify email"); 
+          showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("Please verify your email before login"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
         }
       }
       else{
@@ -153,10 +171,58 @@ class Body extends StatelessWidget {
     } catch (e) {
       print("[ERROR] " + e.code);
       if (e.code == "ERROR_WRONG_PASSWORD") {
+        showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("Your password is incorrect"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
         passwordController.clear();
       } else if (e.code == "ERROR_USER_NOT_FOUND"){
+        showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("User is not found"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
         passwordController.clear();
         emailController.clear();
+      } else if (e.code == "ERROR_INVALID_EMAIL") {
+        showDialog(
+          context: context, 
+          builder: (_) => new AlertDialog(
+                        title: new Text("ERROR!!!"),
+                        content: new Text("Invalid email"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                    ),
+        );
+        emailController.clear();
+        passwordController.clear();
       }
     }
     

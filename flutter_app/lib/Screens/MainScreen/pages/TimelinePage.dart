@@ -13,8 +13,20 @@ class TimelinePageState extends State<TimelinePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(appName),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: <Color>[
+                appPrimaryColor,
+                appPrimaryColor2
+              ],
+            ),
+          ),
+        ),
         actions: [
-          IconButton(icon: Icon(Icons.message), onPressed: (){}),
+          IconButton(icon: Icon(Icons.add_box), onPressed: (){}),
         ],
       ),
       body: Center(child: Text("Timeline Page"),),

@@ -14,6 +14,18 @@ class SearchPageState extends State<SearchPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: <Color>[
+                appPrimaryColor,
+                appPrimaryColor2
+              ],
+            ),
+          ),
+        ),
         title: Container(
           height: appBarHeight * 0.8,
           margin: EdgeInsets.all(5),
