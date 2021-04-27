@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/Screens/Welcome/Welcome.dart';
+import 'package:flutter_app/Screens/MainScreen/pages/SettingPage.dart';
 import 'package:flutter_app/constants.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -10,7 +10,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final firestore = Firestore.instance;
   String userName = "";
 
@@ -37,9 +36,8 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
       appBar: AppBar(
+        brightness: Brightness.dark,
         automaticallyImplyLeading: false,
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -60,43 +58,16 @@ class ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: Icon(Icons.settings), 
             onPressed: (){
-              _scaffoldKey.currentState.openEndDrawer();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context){
+                    return SettingPage();
+                })
+              );
             }
           )
         ],
       ),
       body: Center(child: Text("Profile Page"),),
-      endDrawer: Drawer(
-        elevation: 16,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            ListTile(
-              title: new Text("Log out"),
-              leading: new Icon(Icons.logout),
-              onTap: _signOut
-            ),
-          ],
-        )
-      )
     );
-  }
-
-  Future<void> _signOut() async {
-    try {
-      await FirebaseAuth.instance.signOut().then((_) {
-      Navigator.pushAndRemoveUntil(
-        context, 
-        MaterialPageRoute(
-              builder: (context) {
-                return WelcomeScreen();
-              },
-            ), 
-        (route) => false
-      );
-    });
-    } catch (e) {
-
-    }
   }
 }

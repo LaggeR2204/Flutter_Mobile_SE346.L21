@@ -14,6 +14,7 @@ class SearchPageState extends State<SearchPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        brightness: Brightness.dark,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(

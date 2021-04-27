@@ -7,12 +7,17 @@ class TimelinePage extends StatefulWidget {
 }
 
 class TimelinePageState extends State<TimelinePage> {
+  final double appBarHeight = AppBar().preferredSize.height;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(appName),
+        brightness: Brightness.dark,
+        title: Text(
+          appName,
+          style: TextStyle(fontFamily: 'Billabong', fontSize: appBarHeight * 0.7, fontStyle: FontStyle.italic),
+        ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -26,7 +31,7 @@ class TimelinePageState extends State<TimelinePage> {
           ),
         ),
         actions: [
-          IconButton(icon: Icon(Icons.add_box), onPressed: (){}),
+          IconButton(icon: Icon(Icons.add_circle_rounded), onPressed: (){}),
         ],
       ),
       body: Center(child: Text("Timeline Page"),),

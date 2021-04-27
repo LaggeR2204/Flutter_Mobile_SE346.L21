@@ -50,7 +50,7 @@ class HomePageState extends State<HomePage> {
         items: allNavigationItems.map((NavigationItem navigationItem) {
           return BottomNavigationBarItem(
             icon: Icon(navigationItem.icon, color: appPrimaryColor,),
-            backgroundColor: Colors.white,
+            backgroundColor: appBackgroundLightColor,
             title: Text(navigationItem.title, style: TextStyle(color: appPrimaryColor),)
           );
         }).toList(),

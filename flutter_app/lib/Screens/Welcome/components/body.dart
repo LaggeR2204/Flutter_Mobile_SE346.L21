@@ -20,7 +20,7 @@ class Body extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: size.height * 0.1),
-                  Text(appName, style: TextStyle(fontSize: size.height * 0.075, color: appPrimaryColor),),
+                  Text(appName, style: TextStyle(fontFamily: 'Billabong',fontSize: size.height * 0.1, color: appPrimaryColor, fontStyle: FontStyle.italic),),
                   SizedBox(height: size.height * 0.1),
                   RoundedButton(
                       text: "LOGIN",

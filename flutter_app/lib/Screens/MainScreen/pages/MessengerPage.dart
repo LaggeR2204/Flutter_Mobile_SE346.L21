@@ -8,7 +8,7 @@ class MessengerPage extends StatefulWidget {
 
 class MessengerPageState extends State<MessengerPage> {
   final double appBarHeight = AppBar().preferredSize.height;
-  var newMessageIcon = Icons.add_circle_rounded;
+  var newMessageIcon = Icons.edit_rounded;
   Widget newMessage = Text("Message");
 
   @override
@@ -16,6 +16,7 @@ class MessengerPageState extends State<MessengerPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        brightness: Brightness.dark,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -32,11 +33,11 @@ class MessengerPageState extends State<MessengerPage> {
         title: newMessage,
         actions: [
           IconButton(
-            icon: Icon(newMessageIcon, size: appBarHeight * 0.6,), 
+            icon: Icon(newMessageIcon), 
             padding: EdgeInsets.only(right: 10.0), 
             onPressed: (){
               setState(() {
-                if (this.newMessageIcon == Icons.add_circle_rounded) {
+                if (this.newMessageIcon == Icons.edit_rounded) {
                   this.newMessageIcon = Icons.cancel;
                   this.newMessage = Container(
                                       height: appBarHeight * 0.8,
@@ -58,7 +59,7 @@ class MessengerPageState extends State<MessengerPage> {
                                     );
                 } 
                 else {
-                  this.newMessageIcon = Icons.add_circle_rounded;
+                  this.newMessageIcon = Icons.edit_rounded;
                   this.newMessage = Text("Message");
                 }
               });
