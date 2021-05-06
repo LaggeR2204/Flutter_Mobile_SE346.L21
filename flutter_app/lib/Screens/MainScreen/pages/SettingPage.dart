@@ -11,6 +11,12 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
 
   @override
+  void initState()
+  {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
@@ -45,10 +51,16 @@ class _SettingPageState extends State<SettingPage> {
               title: new Text("other setting"),
               leading: new Icon(Icons.child_friendly, color: Colors.orange,),
             ),
-            Divider(color: Colors.black),
-            ListTile(
-              title: new Text("other setting 2"),
-              leading: new Icon(Icons.edit, color: Colors.blueAccent,),
+            Container(
+              margin: EdgeInsets.fromLTRB(size.width * 0.03, 10, size.width * 0.03, 10),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.wb_sunny, color: Colors.yellow,),
+                  SizedBox(width: size.width * 0.08,),
+                  Text("Change theme", style: TextStyle(fontSize: size.width * 0.04),),
+                  SizedBox(width: size.width * 0.5,),
+                ],
+              )
             ),
             Divider(color: Colors.black),
             ListTile(

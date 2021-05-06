@@ -12,7 +12,6 @@ class NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         brightness: Brightness.dark,
         flexibleSpace: Container(
@@ -40,7 +39,6 @@ class NotificationsPageState extends State<NotificationsPage> {
               isMute 
               ? Icons.notifications_off 
               : Icons.notifications,
-              color: Colors.white,
             ),
           ),
         ],
