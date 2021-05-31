@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/SettingPage.dart';
@@ -10,7 +9,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  final firestore = Firestore.instance;
   String userName = "";
 
   @override
@@ -20,16 +18,17 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> updateProfileData() async{
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    firestore.collection('users').document(user.uid).get().then((querySnapshot) {
-      setState(() {
-        userName = querySnapshot['displayName'];
-      });
-    });
+    User user = FirebaseAuth.instance.currentUser;
+    // firestore.collection('users').doc(user.uid).get().then((querySnapshot) {
+    //   setState(() {
+    //     userName = querySnapshot['displayName'];
+    //   });
+    // });
+    userName = user.displayName;
   }
 
   Future<String> getCurrentUserUID() async{
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    User user = FirebaseAuth.instance.currentUser;
     return user.uid;
   }
 

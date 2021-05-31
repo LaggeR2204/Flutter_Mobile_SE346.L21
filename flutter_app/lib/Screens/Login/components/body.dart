@@ -129,12 +129,12 @@ class Body extends StatelessWidget {
     //Dang nhap voi firebase
     print("[ACC] " + _email + " " + _password);
     try {
-      final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+      final User user = (await _auth.signInWithEmailAndPassword(
         email: _email,
         password: _password,
       )).user;
       if (user != null){
-        if(user.isEmailVerified){ 
+        if(user.emailVerified){ 
           //Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
             context, 

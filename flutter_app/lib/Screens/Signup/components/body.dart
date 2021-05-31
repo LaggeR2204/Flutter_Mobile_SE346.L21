@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/Login/Login.dart';
@@ -150,7 +149,7 @@ class Body extends StatelessWidget {
   void RegisterWithFirebase(BuildContext context,String _email, String _username, String _password) async {
     print("[SIGNUP ACC] " + _email + " " + _password + " " + _username);
     try {
-      final FirebaseUser user = (await _auth
+      final User user = (await _auth
           .createUserWithEmailAndPassword(
               email: _email, password: _password)).user;
       try {
@@ -159,14 +158,14 @@ class Body extends StatelessWidget {
       catch (e) {
 
       }
-      UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
-      userUpdateInfo.displayName = _username;
-      user.updateProfile(userUpdateInfo).then((onValue) {
-        Firestore.instance.collection('users').document(user.uid).setData(
-          {'email': _email, 'displayName': _username}).then((onValue) {
 
-          });
-      });
+      user.updateProfile(displayName: _username);
+      // .then((onValue) {
+      //   Firestore.instance.collection('users').doc(user.uid).set(
+      //     {'email': _email, 'displayName': _username}).then((onValue) {
+
+      //     });
+      // });
 
       showDialog(
           context: context, 
