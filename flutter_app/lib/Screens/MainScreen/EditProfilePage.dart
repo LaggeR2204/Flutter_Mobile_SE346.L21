@@ -1,10 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 import '../../constants.dart';
 
-class EditProfilePage extends StatelessWidget {
+
+class EditProfilePage extends StatefulWidget {
+  @override
+  EditProfilePage_State createState() => EditProfilePage_State();
+}
+class EditProfilePage_State extends State<EditProfilePage> {
   final TextEditingController nameController = TextEditingController();
+  File file;
+  ImagePicker imagePicker = ImagePicker();
+
+  @override
+  void initState(){
+    nameController.text = FirebaseAuth.instance.currentUser.displayName;
+    super.initState();
+  }
 
   changeProfilePhoto(BuildContext parentContext) {
     return showDialog(
@@ -25,7 +42,72 @@ class EditProfilePage extends StatelessWidget {
     );
   }
 
+  _selectImage(BuildContext parentContext) async {
+    return showDialog<Null>(
+      context: parentContext,
+      barrierDismissible: false, // user must tap button!
+
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Text('Create a Post'),
+          children: <Widget>[
+            SimpleDialogOption(
+                child: const Text('Take a photo'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                   PickedFile imageFile =
+                      await imagePicker.getImage(source: ImageSource.camera, maxWidth: 1920, maxHeight: 1200, imageQuality: 80);
+                  setState(() {
+                    file = File(imageFile.path);
+                  });
+                }),
+            SimpleDialogOption(
+                child: const Text('Choose from Gallery'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  PickedFile imageFile =
+                      await imagePicker.getImage(source: ImageSource.gallery, maxWidth: 1920, maxHeight: 1200, imageQuality: 80);
+                  setState(() {
+                    file = File(imageFile.path);
+                  });
+                }),
+            SimpleDialogOption(
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  changeProfileImage(BuildContext context) async {
+    file = null;
+    await _selectImage(context);
+  }
+
+  Future<String> uploadImage(var imageFile) async {
+    var uuid = Uuid().v1();
+    Reference ref = FirebaseStorage.instance.ref().child("profile_$uuid.jpg");
+    UploadTask uploadTask = ref.putFile(imageFile);
+
+    String downloadUrl = await (await uploadTask).ref.getDownloadURL();
+    return downloadUrl;
+  }
+
   applyChanges() {
+    String oldAvatarURL = FirebaseAuth.instance.currentUser.photoURL;
+    if(oldAvatarURL != null){
+      Reference ref = FirebaseStorage.instance.refFromURL(FirebaseAuth.instance.currentUser.photoURL);
+      ref.delete();
+    }
+    uploadImage(file).then((data) => 
+      FirebaseAuth.instance.currentUser.updateProfile(photoURL: data)
+    ).then((value) => 
+        file = null
+    );
     FirebaseAuth.instance.currentUser.updateProfile(displayName: nameController.text);
   }
 
@@ -52,8 +134,6 @@ class EditProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    nameController.text = FirebaseAuth.instance.currentUser.displayName;
-
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.dark,
@@ -87,17 +167,28 @@ class EditProfilePage extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                child: (FirebaseAuth.instance.currentUser.photoURL != null)?
+                child: (file != null) ?
+                ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.file(
+                        file,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    )
+                :
+                ((FirebaseAuth.instance.currentUser.photoURL != null)?
                 CircleAvatar(
                   backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser.photoURL),
                   radius: 50.0,
                 )
                 :
-                Image.asset("assets/images/defaultProfileImage.png")
+                Image.asset("assets/images/defaultProfileImage.png"))
               ),
               FlatButton(
                 onPressed: () {
-                  changeProfilePhoto(context);
+                  changeProfileImage(context);
                 },
                 child: Text(
                   "Change Photo",
@@ -118,52 +209,5 @@ class EditProfilePage extends StatelessWidget {
             ],
           ),
     );
-    // return FutureBuilder(
-    //     future: FirebaseFirestore.instance
-    //         .collection('users')
-    //         .doc(FirebaseAuth.instance.currentUser.uid)
-    //         .get(),
-    //     builder: (context, snapshot) {
-    //       if (!snapshot.hasData)
-    //         return Container(
-    //             alignment: FractionalOffset.center,
-    //             child: CircularProgressIndicator());
-
-    //       //User user = User.fromDocument(snapshot.data);
-
-    //       nameController.text = FirebaseAuth.instance.currentUser.displayName;
-
-    //       return Column(
-    //         children: <Widget>[
-    //           Padding(
-    //             padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-    //             child: CircleAvatar(
-    //               backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser.photoURL),
-    //               radius: 50.0,
-    //             )
-    //           ),
-    //           FlatButton(
-    //             onPressed: () {
-    //               changeProfilePhoto(context);
-    //             },
-    //             child: Text(
-    //               "Change Photo",
-    //               style: const TextStyle(
-    //                   color: Colors.blue,
-    //                   fontSize: 20.0,
-    //                   fontWeight: FontWeight.bold),
-    //             )
-    //           ),
-    //           Padding(
-    //             padding: const EdgeInsets.all(16.0),
-    //             child: Column(
-    //               children: <Widget>[
-    //                 buildTextField(name: "Name", controller: nameController),
-    //               ],
-    //             ),
-    //           ),
-    //         ],
-    //       );
-    //     });
   }
 }
