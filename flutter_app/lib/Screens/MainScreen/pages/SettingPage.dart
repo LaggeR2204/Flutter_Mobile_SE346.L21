@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/Welcome/Welcome.dart';
 import 'package:flutter_app/constants.dart';
+import 'package:flutter_app/main.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -77,6 +78,7 @@ class _SettingPageState extends State<SettingPage> {
   Future<void> _signOut() async {
     try {
       await FirebaseAuth.instance.signOut().then((_) {
+      currentUserModel = null;
       Navigator.pushAndRemoveUntil(
         context, 
         MaterialPageRoute(

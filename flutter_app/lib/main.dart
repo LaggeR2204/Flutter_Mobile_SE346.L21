@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,11 @@ import 'package:flutter_app/Screens/MainScreen/pages/HomePage.dart';
 import 'package:flutter_app/Screens/Welcome/Welcome.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/models/AppUser.dart';
 import 'package:splashscreen/splashscreen.dart';
 
+AppUser currentUserModel;
+final ref = FirebaseFirestore.instance.collection('users');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +22,14 @@ Future<void> main() async {
     )
   );
   var user = FirebaseAuth.instance.currentUser;
+  if(user != null){
+    DocumentSnapshot userRecord = await ref.doc(user.uid).get();
+    if (userRecord.data() != null) {
+      userRecord = await ref.doc(user.uid).get();
+    }
+
+    currentUserModel = AppUser.fromDocument(userRecord);
+  }
   runApp(MyApp2(user != null ? HomePage(): WelcomeScreen()));
 }
 

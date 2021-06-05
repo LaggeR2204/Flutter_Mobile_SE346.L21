@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/NotificationsPage.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/ProfilePage.dart';
@@ -33,7 +34,7 @@ class HomePageState extends State<HomePage> {
     SearchPage(),
     MessengerPage(),
     NotificationsPage(),
-    ProfilePage()
+    ProfilePage(userId: FirebaseAuth.instance.currentUser.uid),
   ];
 
   @override

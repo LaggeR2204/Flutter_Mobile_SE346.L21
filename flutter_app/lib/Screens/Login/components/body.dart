@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/HomePage.dart';
@@ -7,6 +8,10 @@ import 'package:flutter_app/components/RoundedPasswordFeild.dart';
 import 'package:flutter_app/components/RoundedTextField.dart';
 import 'package:flutter_app/components/TextFieldContainer.dart';
 import 'package:flutter_app/constants.dart';
+import 'package:flutter_app/main.dart';
+import 'package:flutter_app/models/AppUser.dart';
+
+final ref = FirebaseFirestore.instance.collection('users');
 
 class Body extends StatelessWidget {
 
@@ -134,7 +139,8 @@ class Body extends StatelessWidget {
         password: _password,
       )).user;
       if (user != null){
-        if(user.emailVerified){ 
+        if(user.emailVerified){
+          tryCreateUserRecord();
           //Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
             context, 
@@ -226,5 +232,19 @@ class Body extends StatelessWidget {
       }
     }
     
+  }
+
+  Future<void> tryCreateUserRecord() async {
+    User user = _auth.currentUser;
+    if (user == null) {
+      return null;
+    }
+    DocumentSnapshot userRecord = await ref.doc(user.uid).get();
+    if (userRecord.data() != null) {
+      userRecord = await ref.doc(user.uid).get();
+    }
+
+    currentUserModel = AppUser.fromDocument(userRecord);
+    //print("current user model " + currentUserModel.id + currentUserModel.displayName);
   }
 }

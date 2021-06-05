@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/Login/Login.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_app/components/RoundedPasswordFeild.dart';
 import 'package:flutter_app/components/RoundedTextField.dart';
 import 'package:flutter_app/components/TextFieldContainer.dart';
 import 'package:flutter_app/constants.dart';
+
+final ref = FirebaseFirestore.instance.collection('users');
 
 class Body extends StatelessWidget {
   @override
@@ -159,13 +162,14 @@ class Body extends StatelessWidget {
 
       }
 
-      user.updateProfile(displayName: _username);
+      //user.updateProfile(displayName: _username);
       // .then((onValue) {
       //   Firestore.instance.collection('users').doc(user.uid).set(
       //     {'email': _email, 'displayName': _username}).then((onValue) {
 
       //     });
       // });
+      addUserInfoToStorage(user);
 
       showDialog(
           context: context, 
@@ -246,5 +250,34 @@ class Body extends StatelessWidget {
         print("[SIGNUP ERROR] " + error.code);
       }
     }
+  }
+
+  Future<void> addUserInfoToStorage(User user) async {
+    // User user = _auth.currentUser;
+    // if (user == null) {
+    //   return null;
+    // }
+    // DocumentSnapshot userRecord = await ref.doc(user.uid).get();
+    // if (userRecord.data() == null) {
+      // no user record exists, time to create
+
+      String userName = usernameController.text;
+
+      if (userName != null || userName.length != 0) {
+        ref.doc(user.uid).set({
+          "id": user.uid,
+          "photoUrl": "",//FirebaseStorage.instance.ref().child("defaultProfileImage.png"),
+          "email": user.email,
+          "displayName": userName,
+          "bio": "",
+          "followers": {},
+          "following": {},
+        });
+      }
+      //userRecord = await ref.doc(user.uid).get();
+    //}
+
+    //currentUserModel = AppUser.fromDocument(userRecord);
+    //return null;
   }
 }
