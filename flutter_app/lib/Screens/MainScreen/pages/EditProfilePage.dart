@@ -43,7 +43,7 @@ class EditProfilePage_State extends State<EditProfilePage> {
           height: 300,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: appPrimaryLightColor,
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(29),
                 topRight:  const Radius.circular(29),
@@ -180,6 +180,7 @@ class EditProfilePage_State extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         var user = FirebaseAuth.instance.currentUser;
@@ -240,37 +241,122 @@ class EditProfilePage_State extends State<EditProfilePage> {
             body: SingleChildScrollView(
               child: Column(
               children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                    child: (file != null)
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.file(
-                              file,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.fitHeight,
-                            ),
-                          )
-                        : ((currentUserModel.photoUrl != null)
-                            ? CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(currentUserModel.photoUrl),
-                                radius: 50.0,
-                              )
-                            : Image.asset(
-                                "assets/images/defaultProfileImage.png"))),
-                FlatButton(
-                    onPressed: () {
-                      changeProfileImage(context);
-                    },
-                    child: Text(
-                      "Change Photo",
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold),
-                    )),
+                SizedBox(height: 40,),
+                SizedBox(
+                  height: 115,
+                  width: 115,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.expand,
+                    children: [
+                      (file != null)
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.file(
+                            file,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.fitHeight,
+                          ),
+                        )
+                      : ((currentUserModel.photoUrl != null)
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(currentUserModel.photoUrl),
+                              radius: 50.0,
+                            )
+                          : Image.asset(
+                              "assets/images/defaultProfileImage.png")),
+                      Positioned(
+                        bottom: -10,
+                        right: -25,
+                        child: RawMaterialButton(
+                          onPressed: () {
+                            changeProfileImage(context);
+                          },
+                          elevation: 2.0,
+                          fillColor: Colors.white70,
+                          //fillColor: Color(0x60FFFFFF),
+                          child: Icon(Icons.camera_alt_outlined, color: appPrimaryColor, size: 20,),
+                          padding: EdgeInsets.all(10.0),
+                          shape: CircleBorder(),
+                        )),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20,),
+                // Stack(
+                //   children: <Widget>[
+                //     Container(
+                //         decoration: new BoxDecoration(color: Colors.white10),
+                //         alignment: Alignment.center,
+                //         height: 200,
+                //         child: (file != null)
+                //           ? ClipRRect(
+                //               borderRadius: BorderRadius.circular(50),
+                //               child: Image.file(
+                //                 file,
+                //                 width: 100,
+                //                 height: 100,
+                //                 fit: BoxFit.fitHeight,
+                //               ),
+                //             )
+                //           : ((currentUserModel.photoUrl != null)
+                //               ? CircleAvatar(
+                //                   backgroundImage:
+                //                       NetworkImage(currentUserModel.photoUrl),
+                //                   radius: 50.0,
+                //                 )
+                //               : Image.asset(
+                //                   "assets/images/defaultProfileImage.png"))
+                //     ),
+                //     Positioned(
+                //       bottom: 45, 
+                //       right: size.width * 0.5 - 55,
+                //       child: IconButton(
+                //         onPressed: (){
+                //           changeProfileImage(context);
+                //         },
+                //         icon: Icon(Icons.add_circle_rounded, color: appPrimaryColor, size: 35,)
+                //       ),
+                //       // child: Icon(
+                //       //   Icons.edit_rounded,
+                //       //   color: appPrimaryColor,
+                //       // ),
+                //     ),
+                //   ],
+                // ),
+                // Padding(
+                //     padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                //     child: (file != null)
+                //         ? ClipRRect(
+                //             borderRadius: BorderRadius.circular(50),
+                //             child: Image.file(
+                //               file,
+                //               width: 100,
+                //               height: 100,
+                //               fit: BoxFit.fitHeight,
+                //             ),
+                //           )
+                //         : ((currentUserModel.photoUrl != null)
+                //             ? CircleAvatar(
+                //                 backgroundImage:
+                //                     NetworkImage(currentUserModel.photoUrl),
+                //                 radius: 50.0,
+                //               )
+                //             : Image.asset(
+                //                 "assets/images/defaultProfileImage.png"))),
+                // FlatButton(
+                //     onPressed: () {
+                //       changeProfileImage(context);
+                //     },
+                //     child: Text(
+                //       "Change Photo",
+                //       style: const TextStyle(
+                //           color: Colors.black,
+                //           fontSize: 20.0,
+                //           fontWeight: FontWeight.bold),
+                //     )),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
