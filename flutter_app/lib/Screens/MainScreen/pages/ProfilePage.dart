@@ -51,13 +51,8 @@ class ProfilePageState extends State<ProfilePage>
   //   return user.uid;
   // }
 
-    EditProfilePage editPage = new EditProfilePage();
+  EditProfilePage editPage = new EditProfilePage();
   openEditProfilePage(){
-
-    // Navigator.of(context)
-    //     .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
-    //   return editPage;
-    // }));
     Navigator.push(
       context, 
       MaterialPageRoute(
@@ -357,7 +352,7 @@ class ProfilePageState extends State<ProfilePage>
                   ),
                 ),
                 title: Container(
-                  child: Text(userName),
+                  child: Text(user.displayName),
                 ),
                 actions: [
                   IconButton(
@@ -414,14 +409,7 @@ class ProfilePageState extends State<ProfilePage>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                        buildProfileFollowButton(context),
-                                        // TextButton(onPressed: (){
-                                        //   Navigator.of(context)
-                                        //       .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
-                                        //     return editPage;
-                                        //   }));
-                                        // }, 
-                                        // child: Text("button edit profile test"))
+                                        buildProfileFollowButton(context)
                                       ]),
                                 ],
                               ),
