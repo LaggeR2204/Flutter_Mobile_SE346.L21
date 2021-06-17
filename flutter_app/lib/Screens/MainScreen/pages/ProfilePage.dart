@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/AppUser.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/SettingPage.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/EditProfilePage.dart';
+import 'package:flutter_app/models/Post.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({this.userId});
@@ -45,11 +47,6 @@ class ProfilePageState extends State<ProfilePage>
       });
     });
   }
-
-  // Future<String> getCurrentUserUID() async{
-  //   User user = FirebaseAuth.instance.currentUser;
-  //   return user.uid;
-  // }
 
   EditProfilePage editPage = new EditProfilePage();
   openEditProfilePage(){
@@ -147,6 +144,7 @@ class ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context); // reloads state when opened again
+    final Size size = MediaQuery.of(context).size;
 
     Column buildStatColumn(String label, int number) {
       return Column(
@@ -155,7 +153,7 @@ class ProfilePageState extends State<ProfilePage>
         children: <Widget>[
           Text(
             number.toString(),
-            style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: size.width * 0.05, fontWeight: FontWeight.bold),
           ),
           Container(
               margin: const EdgeInsets.only(top: 4.0),
@@ -163,7 +161,7 @@ class ProfilePageState extends State<ProfilePage>
                 label,
                 style: TextStyle(
                     color: Colors.grey,
-                    fontSize: 15.0,
+                    fontSize: size.width * 0.035,
                     fontWeight: FontWeight.w400),
               ))
         ],
@@ -189,7 +187,7 @@ class ProfilePageState extends State<ProfilePage>
               child: Text(text,
                   style: TextStyle(
                       color: textColor, fontWeight: FontWeight.bold)),
-              width: 250.0,
+              width: size.width * 0.6,
               height: 27.0,
             )),
       );
@@ -265,55 +263,55 @@ class ProfilePageState extends State<ProfilePage>
       );
     }
 
-//     Container buildUserPosts() {
-//       Future<List<ImagePost>> getPosts() async {
-//         List<ImagePost> posts = [];
-//         var snap = await FirebaseFirestore.instance
-//             .collection('insta_posts')
-//             .where('ownerId', isEqualTo: profileId)
-//             .orderBy("timestamp")
-//             .get();
-//         for (var doc in snap.docs) {
-//           posts.add(ImagePost.fromDocument(doc));
-//         }
-//         setState(() {
-//           postCount = snap.docs.length;
-//         });
+    // Container buildUserPosts() {
+    //   Future<List<Post>> getPosts() async {
+    //     List<Post> posts = [];
+    //     var snap = await FirebaseFirestore.instance
+    //         .collection('insta_posts')
+    //         .where('ownerId', isEqualTo: profileId)
+    //         .orderBy("timestamp")
+    //         .get();
+    //     for (var doc in snap.docs) {
+    //       posts.add(Post.fromDocument(doc));
+    //     }
+    //     setState(() {
+    //       postCount = snap.docs.length;
+    //     });
 
-//         return posts.reversed.toList();
-//       }
+    //     return posts.reversed.toList();
+    //   }
 
-//       return Container(
-//           child: FutureBuilder<List<ImagePost>>(
-//         future: getPosts(),
-//         builder: (context, snapshot) {
-//           if (!snapshot.hasData)
-//             return Container(
-//                 alignment: FractionalOffset.center,
-//                 padding: const EdgeInsets.only(top: 10.0),
-//                 child: CircularProgressIndicator());
-//           else if (view == "grid") {
-//             // build the grid
-//             return GridView.count(
-//                 crossAxisCount: 3,
-//                 childAspectRatio: 1.0,
-// //                    padding: const EdgeInsets.all(0.5),
-//                 mainAxisSpacing: 1.5,
-//                 crossAxisSpacing: 1.5,
-//                 shrinkWrap: true,
-//                 physics: const NeverScrollableScrollPhysics(),
-//                 children: snapshot.data.map((ImagePost imagePost) {
-//                   return GridTile(child: ImageTile(imagePost));
-//                 }).toList());
-//           } else if (view == "feed") {
-//             return Column(
-//                 children: snapshot.data.map((ImagePost imagePost) {
-//               return imagePost;
-//             }).toList());
-//           }
-//         },
-//       ));
-//     }
+    //   return Container(
+    //       child: FutureBuilder<List<Post>>(
+    //     future: getPosts(),
+    //     builder: (context, snapshot) {
+    //       if (!snapshot.hasData)
+    //         return Container(
+    //             alignment: FractionalOffset.center,
+    //             padding: const EdgeInsets.only(top: 10.0),
+    //             child: CircularProgressIndicator());
+    //       else if (view == "grid") {
+    //         build the grid
+    //         return GridView.count(
+    //             crossAxisCount: 3,
+    //             childAspectRatio: 1.0,
+    //                padding: const EdgeInsets.all(0.5),
+    //             mainAxisSpacing: 1.5,
+    //             crossAxisSpacing: 1.5,
+    //             shrinkWrap: true,
+    //             physics: const NeverScrollableScrollPhysics(),
+    //             children: snapshot.data.map((Post post) {
+    //               return GridTile(child: ImageTile(post));
+    //             }).toList());
+    //       } else if (view == "feed") {
+    //         return Column(
+    //             children: snapshot.data.map((Post post) {
+    //           return post;
+    //         }).toList());
+    //       }
+    //     },
+    //   ));
+    // }
 
     return StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -336,7 +334,8 @@ class ProfilePageState extends State<ProfilePage>
           }
 
           return Scaffold(
-              appBar: AppBar(
+              appBar: (currentUserModel.id == this.profileId)?
+              AppBar(
                 brightness: Brightness.dark,
                 automaticallyImplyLeading: false,
                 flexibleSpace: Container(
@@ -366,6 +365,26 @@ class ProfilePageState extends State<ProfilePage>
                     }
                   )
                 ],
+              )
+              :
+              AppBar(
+                brightness: Brightness.dark,
+                automaticallyImplyLeading: true,
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: <Color>[
+                        appPrimaryColor,
+                        appPrimaryColor2
+                      ],
+                    ),
+                  ),
+                ),
+                title: Container(
+                  child: Text(user.displayName),
+                ),
               ),
               body: ListView(
                 children: <Widget>[
@@ -377,18 +396,17 @@ class ProfilePageState extends State<ProfilePage>
                           children: <Widget>[
                             (user.photoUrl != "")?
                             CircleAvatar(
-                              radius: 40.0,
+                              radius: size.width * 0.11,
                               backgroundColor: Colors.grey,
                               backgroundImage: NetworkImage(user.photoUrl),
                             )
                             :
                             Image.asset(
                               "assets/images/defaultProfileImage.png",
-                              width: 90,
-                              height: 90,
+                              width: size.width * 0.23,
+                              height: size.width * 0.23,
                               fit: BoxFit.fitHeight
                             ),
-                            
                             Expanded(
                               flex: 1,
                               child: Column(

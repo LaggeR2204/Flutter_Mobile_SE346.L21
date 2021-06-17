@@ -63,7 +63,7 @@ class _SettingPageState extends State<SettingPage> {
                 ],
               )
             ),
-            Divider(color: Colors.black),
+            Divider(),
             ListTile(
               title: new Text("Log out"),
               leading: new Icon(Icons.logout),

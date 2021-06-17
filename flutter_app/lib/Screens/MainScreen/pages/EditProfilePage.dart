@@ -20,6 +20,7 @@ class EditProfilePage_State extends State<EditProfilePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
 
+  bool isDeleteProfileImage;
   File file;
   ImagePicker imagePicker = ImagePicker();
 
@@ -30,17 +31,19 @@ class EditProfilePage_State extends State<EditProfilePage> {
     } else {
       print("[current photourl ]" + currentUserModel.photoUrl);
     }
+    isDeleteProfileImage = false;
     file = null;
     super.initState();
   }
 
   _selectNewImage(BuildContext parentContext) async {
+    Size size = MediaQuery.of(context).size;
     return showModalBottomSheet(
       context: context,
       builder: (context){
         return Container(
           color: Color(0xFF737373),
-          height: 300,
+          height: 400,
           child: Container(
             decoration: BoxDecoration(
               color: appPrimaryLightColor,
@@ -53,6 +56,10 @@ class EditProfilePage_State extends State<EditProfilePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                Icon(
+                  Icons.remove,
+                  color: Colors.grey
+                ),
                 const Text(
                   'Upload Photo',
                   style: TextStyle(
@@ -71,6 +78,7 @@ class EditProfilePage_State extends State<EditProfilePage> {
                         imageQuality: 80);
                     setState(() {
                       file = File(imageFile.path);
+                      isDeleteProfileImage = false;
                     });
                   },
                 ),
@@ -85,7 +93,17 @@ class EditProfilePage_State extends State<EditProfilePage> {
                         imageQuality: 80);
                     setState(() {
                       file = File(imageFile.path);
+                      isDeleteProfileImage = false;
                     });
+                  },
+                ),
+                RoundedButton(
+                  text: "Delete Profile Image",
+                  press:  () {
+                    setState(() {
+                      isDeleteProfileImage = true;
+                    });
+                    Navigator.pop(context);
                   },
                 ),
                 RoundedButton(
@@ -125,7 +143,7 @@ class EditProfilePage_State extends State<EditProfilePage> {
 
   applyChanges() async {
     print("[current photo url] " + currentUserModel.photoUrl);
-    if (currentUserModel.photoUrl != null) {
+    if (currentUserModel.photoUrl != "") {
       Reference ref =
           FirebaseStorage.instance.refFromURL(currentUserModel.photoUrl);
       ref.delete();
@@ -146,13 +164,22 @@ class EditProfilePage_State extends State<EditProfilePage> {
           })
       );
       file = null;
+    } else if(isDeleteProfileImage){
+      FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUserModel.id)
+            .update({
+              "photoUrl": "",
+              "displayName": nameController.text,
+              "bio": bioController.text,
+        });
     } else {
       FirebaseFirestore.instance
             .collection('users')
             .doc(currentUserModel.id)
             .update({
-          "displayName": nameController.text,
-          "bio": bioController.text,
+              "displayName": nameController.text,
+              "bio": bioController.text,
         });
     }
   }
@@ -207,8 +234,6 @@ class EditProfilePage_State extends State<EditProfilePage> {
 
           AppUser user = AppUser.fromDocument(snapshot.data);
 
-          print(user.displayName + " " + user.bio);
-
           nameController.text = user.displayName;
           bioController.text = user.bio;
 
@@ -259,14 +284,19 @@ class EditProfilePage_State extends State<EditProfilePage> {
                             fit: BoxFit.fitHeight,
                           ),
                         )
-                      : ((currentUserModel.photoUrl != null)
+                      : (isDeleteProfileImage == true?
+                      Image.asset(
+                              "assets/images/defaultProfileImage.png")
+                      :
+                      ((currentUserModel.photoUrl != "")
                           ? CircleAvatar(
                               backgroundImage:
                                   NetworkImage(currentUserModel.photoUrl),
                               radius: 50.0,
                             )
                           : Image.asset(
-                              "assets/images/defaultProfileImage.png")),
+                              "assets/images/defaultProfileImage.png"))
+                      ),
                       Positioned(
                         bottom: -10,
                         right: -25,
@@ -285,78 +315,6 @@ class EditProfilePage_State extends State<EditProfilePage> {
                   ),
                 ),
                 SizedBox(height: 20,),
-                // Stack(
-                //   children: <Widget>[
-                //     Container(
-                //         decoration: new BoxDecoration(color: Colors.white10),
-                //         alignment: Alignment.center,
-                //         height: 200,
-                //         child: (file != null)
-                //           ? ClipRRect(
-                //               borderRadius: BorderRadius.circular(50),
-                //               child: Image.file(
-                //                 file,
-                //                 width: 100,
-                //                 height: 100,
-                //                 fit: BoxFit.fitHeight,
-                //               ),
-                //             )
-                //           : ((currentUserModel.photoUrl != null)
-                //               ? CircleAvatar(
-                //                   backgroundImage:
-                //                       NetworkImage(currentUserModel.photoUrl),
-                //                   radius: 50.0,
-                //                 )
-                //               : Image.asset(
-                //                   "assets/images/defaultProfileImage.png"))
-                //     ),
-                //     Positioned(
-                //       bottom: 45, 
-                //       right: size.width * 0.5 - 55,
-                //       child: IconButton(
-                //         onPressed: (){
-                //           changeProfileImage(context);
-                //         },
-                //         icon: Icon(Icons.add_circle_rounded, color: appPrimaryColor, size: 35,)
-                //       ),
-                //       // child: Icon(
-                //       //   Icons.edit_rounded,
-                //       //   color: appPrimaryColor,
-                //       // ),
-                //     ),
-                //   ],
-                // ),
-                // Padding(
-                //     padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                //     child: (file != null)
-                //         ? ClipRRect(
-                //             borderRadius: BorderRadius.circular(50),
-                //             child: Image.file(
-                //               file,
-                //               width: 100,
-                //               height: 100,
-                //               fit: BoxFit.fitHeight,
-                //             ),
-                //           )
-                //         : ((currentUserModel.photoUrl != null)
-                //             ? CircleAvatar(
-                //                 backgroundImage:
-                //                     NetworkImage(currentUserModel.photoUrl),
-                //                 radius: 50.0,
-                //               )
-                //             : Image.asset(
-                //                 "assets/images/defaultProfileImage.png"))),
-                // FlatButton(
-                //     onPressed: () {
-                //       changeProfileImage(context);
-                //     },
-                //     child: Text(
-                //       "Change Photo",
-                //       style: const TextStyle(
-                //           color: Colors.black,
-                //           fontSize: 20.0,
-                //           fontWeight: FontWeight.bold),
-                //     )),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
