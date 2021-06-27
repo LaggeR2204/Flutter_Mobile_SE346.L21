@@ -6,7 +6,6 @@ import 'package:flutter_app/models/AppUser.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/SettingPage.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/EditProfilePage.dart';
-import 'package:flutter_app/models/Post.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({this.userId});
@@ -29,19 +28,22 @@ class ProfilePageState extends State<ProfilePage>
   int followerCount = 0;
   int followingCount = 0;
 
-
   String userName = "";
 
   ProfilePageState(this.profileId);
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     updateProfileData();
   }
 
-  Future<void> updateProfileData() async{
-    FirebaseFirestore.instance.collection('users').doc(currentUserId).get().then((querySnapshot) {
+  Future<void> updateProfileData() async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserId)
+        .get()
+        .then((querySnapshot) {
       setState(() {
         userName = querySnapshot['displayName'];
       });
@@ -49,15 +51,12 @@ class ProfilePageState extends State<ProfilePage>
   }
 
   EditProfilePage editPage = new EditProfilePage();
-  openEditProfilePage(){
-    Navigator.push(
-      context, 
-      MaterialPageRoute(
-        builder: (context) {
-          return editPage;
-        },
-      )
-    );
+  openEditProfilePage() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return editPage;
+      },
+    ));
   }
 
   followUser() {
@@ -153,7 +152,8 @@ class ProfilePageState extends State<ProfilePage>
         children: <Widget>[
           Text(
             number.toString(),
-            style: TextStyle(fontSize: size.width * 0.05, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: size.width * 0.05, fontWeight: FontWeight.bold),
           ),
           Container(
               margin: const EdgeInsets.only(top: 4.0),
@@ -185,8 +185,8 @@ class ProfilePageState extends State<ProfilePage>
                   borderRadius: BorderRadius.circular(5.0)),
               alignment: Alignment.center,
               child: Text(text,
-                  style: TextStyle(
-                      color: textColor, fontWeight: FontWeight.bold)),
+                  style:
+                      TextStyle(color: textColor, fontWeight: FontWeight.bold)),
               width: size.width * 0.6,
               height: 27.0,
             )),
@@ -334,58 +334,49 @@ class ProfilePageState extends State<ProfilePage>
           }
 
           return Scaffold(
-              appBar: (currentUserModel.id == this.profileId)?
-              AppBar(
-                brightness: Brightness.dark,
-                automaticallyImplyLeading: false,
-                flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: <Color>[
-                        appPrimaryColor,
-                        appPrimaryColor2
+              appBar: (currentUserModel.id == this.profileId)
+                  ? AppBar(
+                      brightness: Brightness.dark,
+                      automaticallyImplyLeading: false,
+                      flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: <Color>[appPrimaryColor, appPrimaryColor2],
+                          ),
+                        ),
+                      ),
+                      title: Container(
+                        child: Text(user.displayName),
+                      ),
+                      actions: [
+                        IconButton(
+                            icon: Icon(Icons.settings),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return SettingPage();
+                              }));
+                            })
                       ],
+                    )
+                  : AppBar(
+                      brightness: Brightness.dark,
+                      automaticallyImplyLeading: true,
+                      flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: <Color>[appPrimaryColor, appPrimaryColor2],
+                          ),
+                        ),
+                      ),
+                      title: Container(
+                        child: Text(user.displayName),
+                      ),
                     ),
-                  ),
-                ),
-                title: Container(
-                  child: Text(user.displayName),
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.settings), 
-                    onPressed: (){
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context){
-                            return SettingPage();
-                        })
-                      );
-                    }
-                  )
-                ],
-              )
-              :
-              AppBar(
-                brightness: Brightness.dark,
-                automaticallyImplyLeading: true,
-                flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: <Color>[
-                        appPrimaryColor,
-                        appPrimaryColor2
-                      ],
-                    ),
-                  ),
-                ),
-                title: Container(
-                  child: Text(user.displayName),
-                ),
-              ),
               body: ListView(
                 children: <Widget>[
                   Padding(
@@ -394,19 +385,18 @@ class ProfilePageState extends State<ProfilePage>
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            (user.photoUrl != "")?
-                            CircleAvatar(
-                              radius: size.width * 0.11,
-                              backgroundColor: Colors.grey,
-                              backgroundImage: NetworkImage(user.photoUrl),
-                            )
-                            :
-                            Image.asset(
-                              "assets/images/defaultProfileImage.png",
-                              width: size.width * 0.23,
-                              height: size.width * 0.23,
-                              fit: BoxFit.fitHeight
-                            ),
+                            (user.photoUrl != "")
+                                ? CircleAvatar(
+                                    radius: size.width * 0.11,
+                                    backgroundColor: Colors.grey,
+                                    backgroundImage:
+                                        NetworkImage(user.photoUrl),
+                                  )
+                                : Image.asset(
+                                    "assets/images/defaultProfileImage.png",
+                                    width: size.width * 0.23,
+                                    height: size.width * 0.23,
+                                    fit: BoxFit.fitHeight),
                             Expanded(
                               flex: 1,
                               child: Column(
@@ -418,9 +408,9 @@ class ProfilePageState extends State<ProfilePage>
                                     children: <Widget>[
                                       buildStatColumn("posts", postCount),
                                       buildStatColumn("followers",
-                                           _countFollowings(user.followers)),
+                                          _countFollowings(user.followers)),
                                       buildStatColumn("following",
-                                           _countFollowings(user.following)),
+                                          _countFollowings(user.following)),
                                     ],
                                   ),
                                   Row(
