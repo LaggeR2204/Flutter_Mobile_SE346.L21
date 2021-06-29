@@ -84,17 +84,21 @@ class MessengerPageState extends State<MessengerPage>
                             .orderBy('timestamp', descending: true)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          String fromUser =
-                              (snapshot.data.docs[0].data()['idFrom'] !=
-                                      currentUserModel.id)
-                                  ? ""
-                                  : "You: ";
-                          return Container(
-                            child: Text(
-                                '${fromUser}${snapshot.data.docs[0].data()['content']}'),
-                            alignment: Alignment.centerLeft,
-                            margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                          );
+                          if (snapshot.hasData) {
+                            String fromUser =
+                                (snapshot.data.docs[0].data()['idFrom'] !=
+                                        currentUserModel.id)
+                                    ? ""
+                                    : "You: ";
+                            return Container(
+                              child: Text(
+                                  '${fromUser}${snapshot.data.docs[0].data()['content']}'),
+                              alignment: Alignment.centerLeft,
+                              margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                            );
+                          } else {
+                            return Container(height: 0);
+                          }
                         }),
                   ],
                 ),
