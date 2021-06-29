@@ -23,10 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Add the dependency for the Firebase Core Flutter SDK
-  #firebase_core: ^0.5.0
-  #firebase_storage: ^4.0.0
-  #cloud_firestore: ^0.14.0+2
 
   path_provider: ^2.0.2
   path: ^1.8.0
@@ -52,6 +48,9 @@ dependencies:
   splashscreen: ^1.3.5
   #image_picker: ^0.7.2+1
   uuid: ^3.0.1
+  fluttertoast: ^7.0.2
+  cached_network_image: ^3.0.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +81,16 @@ flutter:
     - assets/images/AppLogo.png
     - assets/images/AppLogoWhite.png
     - assets/images/defaultProfileImage.png
+    - assets/images/img_not_available.jpeg
+    - assets/images/mimi1.gif
+    - assets/images/mimi2.gif
+    - assets/images/mimi3.gif
+    - assets/images/mimi4.gif
+    - assets/images/mimi5.gif
+    - assets/images/mimi6.gif
+    - assets/images/mimi7.gif
+    - assets/images/mimi8.gif
+    - assets/images/mimi9.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

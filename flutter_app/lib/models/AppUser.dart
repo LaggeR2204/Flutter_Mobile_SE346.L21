@@ -8,6 +8,7 @@ class AppUser {
   final String bio;
   final Map followers;
   final Map following;
+  final Map chatWiths;
 
   const AppUser(
       {this.id,
@@ -16,17 +17,18 @@ class AppUser {
       this.displayName,
       this.bio,
       this.followers,
-      this.following});
+      this.following,
+      this.chatWiths});
 
   factory AppUser.fromDocument(DocumentSnapshot document) {
     return AppUser(
-      email: document['email'],
-      photoUrl: document['photoUrl'],
-      id: document.id,
-      displayName: document['displayName'],
-      bio: document['bio'],
-      followers: document['followers'],
-      following: document['following'],
-    );
+        email: document['email'],
+        photoUrl: document['photoUrl'],
+        id: document.id,
+        displayName: document['displayName'],
+        bio: document['bio'],
+        followers: document['followers'],
+        following: document['following'],
+        chatWiths: document['chatWiths']);
   }
 }

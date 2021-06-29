@@ -43,7 +43,7 @@ class EditProfilePage_State extends State<EditProfilePage> {
         builder: (context) {
           return Container(
             color: Color(0xFF737373),
-            height: 335,
+            height: 300,
             child: Container(
               decoration: BoxDecoration(
                   color: appPrimaryLightColor,
@@ -56,12 +56,6 @@ class EditProfilePage_State extends State<EditProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Icon(Icons.remove, color: Colors.grey),
-                  const Text(
-                    'Upload Photo',
-                    style: TextStyle(
-                      fontSize: 25.0,
-                    ),
-                  ),
                   SizedBox(
                     height: 10,
                   ),

@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Screens/MainScreen/pages/Chat.dart';
+import 'package:flutter_app/Screens/Welcome/Welcome.dart';
+import 'package:flutter_app/components/RoundedButton.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/AppUser.dart';
-import 'package:flutter_app/Screens/MainScreen/pages/SettingPage.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/EditProfilePage.dart';
 
@@ -354,10 +356,7 @@ class ProfilePageState extends State<ProfilePage>
                         IconButton(
                             icon: Icon(Icons.settings),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (context) {
-                                return SettingPage();
-                              }));
+                              openUserOption(context);
                             })
                       ],
                     )
@@ -376,6 +375,19 @@ class ProfilePageState extends State<ProfilePage>
                       title: Container(
                         child: Text(user.displayName),
                       ),
+                      actions: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return Chat(
+                                    peerId: profileId,
+                                    peerAvatar: user.photoUrl,
+                                    peerName: user.displayName);
+                              }));
+                            },
+                            icon: Icon(Icons.message))
+                      ],
                     ),
               body: ListView(
                 children: <Widget>[
@@ -442,6 +454,59 @@ class ProfilePageState extends State<ProfilePage>
               ));
         });
   }
+}
+
+Future<void> _signOut(BuildContext context) async {
+  try {
+    await FirebaseAuth.instance.signOut().then((_) {
+      currentUserModel = null;
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+        builder: (context) {
+          return WelcomeScreen();
+        },
+      ), (route) => false);
+    });
+  } catch (e) {}
+}
+
+openUserOption(BuildContext parentContext) {
+  Size size = MediaQuery.of(parentContext).size;
+  return showModalBottomSheet(
+      context: parentContext,
+      builder: (context) {
+        return Container(
+          color: Color(0xFF737373),
+          height: 180,
+          child: Container(
+            decoration: BoxDecoration(
+                color: appPrimaryLightColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(29),
+                  topRight: const Radius.circular(29),
+                )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.remove, color: Colors.grey),
+                SizedBox(
+                  height: 10,
+                ),
+                RoundedButton(
+                  text: "Log out",
+                  press: () {
+                    _signOut(context);
+                  },
+                ),
+                RoundedButton(
+                  text: "Cancel",
+                  press: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+        );
+      });
 }
 
 void openProfile(BuildContext context, String userId) {

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app/Screens/MainScreen/pages/Chat.dart';
+import 'package:flutter_app/Screens/MainScreen/pages/ProfilePage.dart';
 import 'package:flutter_app/constants.dart';
+import 'package:flutter_app/main.dart';
 
 class SearchUserChat extends StatefulWidget {
   @override
@@ -60,70 +63,77 @@ class _SearchUserChatState extends State<SearchUserChat> {
           stream: (searchTerm != "" && searchTerm != null)
               ? FirebaseFirestore.instance
                   .collection("users")
+                  //.where("id", isNotEqualTo: currentUserModel.id)
                   .where("displayName", isGreaterThanOrEqualTo: searchTerm)
                   .snapshots()
-              : FirebaseFirestore.instance.collection("users").snapshots(),
+              : FirebaseFirestore.instance
+                  .collection("users")
+                  .where("id", isNotEqualTo: currentUserModel.id)
+                  .snapshots(),
           builder: (context, snapshot) {
             return (snapshot.connectionState == ConnectionState.waiting)
                 ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
-                      DocumentSnapshot data = snapshot.data.docs[index];
-                      return SearchUserCard(size: size, data: data);
+                      DocumentSnapshot doc = snapshot.data.docs[index];
+                      var data = doc.data();
+                      return FlatButton(
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              //return ProfilePage(userId: data['id']);
+                              return Chat(
+                                  peerId: data['id'],
+                                  peerAvatar: data['photoUrl'],
+                                  peerName: data[
+                                      'displayName']); //Mở tin nhắn của user này
+                            }));
+                          },
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          //   return Chat(
+                          //       peerId: data['id'],
+                          //       peerAvatar: data['photoUrl'],
+                          //       peerName: data['displaynName']); //Mở tin nhắn của user này
+                          // })),
+                          child: Column(children: <Widget>[
+                            SizedBox(
+                              height: size.height * 0.01,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: (data['photoUrl'] != "") ? 25 : 20,
+                                ),
+                                (data['photoUrl'] != "")
+                                    ? CircleAvatar(
+                                        radius: size.width * 0.06,
+                                        backgroundImage:
+                                            NetworkImage(data['photoUrl']),
+                                      )
+                                    : Image.asset(
+                                        "assets/images/defaultProfileImage.png",
+                                        width: size.width * 0.14,
+                                        height: size.width * 0.14,
+                                        fit: BoxFit.fitHeight),
+                                SizedBox(
+                                  width: (data['photoUrl'] != "") ? 25 : 20,
+                                ),
+                                Text(
+                                  data['displayName'],
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.height * 0.01,
+                            ),
+                          ]));
                     },
                   );
           },
         ));
-  }
-}
-
-class SearchUserCard extends StatelessWidget {
-  const SearchUserCard({
-    Key key,
-    @required this.size,
-    @required this.data,
-  }) : super(key: key);
-
-  final Size size;
-  final DocumentSnapshot data;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () => print(data['id']),
-        child: Column(children: <Widget>[
-          SizedBox(
-            height: size.height * 0.01,
-          ),
-          Row(
-            children: <Widget>[
-              SizedBox(
-                width: (data['photoUrl'] != "") ? 25 : 20,
-              ),
-              (data['photoUrl'] != "")
-                  ? CircleAvatar(
-                      radius: size.width * 0.06,
-                      backgroundImage: NetworkImage(data['photoUrl']),
-                    )
-                  : Image.asset("assets/images/defaultProfileImage.png",
-                      width: size.width * 0.14,
-                      height: size.width * 0.14,
-                      fit: BoxFit.fitHeight),
-              SizedBox(
-                width: (data['photoUrl'] != "") ? 25 : 20,
-              ),
-              Text(
-                data['displayName'],
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: size.height * 0.01,
-          ),
-        ]));
   }
 }
