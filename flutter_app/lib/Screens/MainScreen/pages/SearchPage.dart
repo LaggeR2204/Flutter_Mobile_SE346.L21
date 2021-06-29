@@ -32,7 +32,6 @@ class SearchPageState extends State<SearchPage> {
             borderRadius: BorderRadius.circular(29),
           ),
           child: TextField(
-            autofocus: true,
             cursorColor: appPrimaryColor,
             decoration: InputDecoration(
               hintStyle: TextStyle(fontSize: appBarHeight * 0.3),
