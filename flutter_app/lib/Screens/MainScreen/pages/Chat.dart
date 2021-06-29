@@ -90,7 +90,7 @@ class Chat extends StatelessWidget {
         builder: (context) {
           return Container(
             color: Color(0xFF737373),
-            height: 180,
+            height: 240,
             child: Container(
               decoration: BoxDecoration(
                   color: appPrimaryLightColor,
@@ -117,6 +117,17 @@ class Chat extends StatelessWidget {
                           userId: peerId,
                         );
                       }));
+                    },
+                  ),
+                  RoundedButton(
+                    text: "Hide messages with ${peerName}",
+                    press: () {
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(peerId)
+                          .update({'chatWiths.${currentUserModel.id}': false});
+                      Navigator.of(context).pop();
+                      Navigator.of(parentContext).pop();
                     },
                   ),
                   RoundedButton(
@@ -273,16 +284,18 @@ class _ChatScreenState extends State<ChatScreen> {
     if (content.trim() != '') {
       textEditingController.clear();
 
-      if (!currentUserModel.chatWiths.containsKey(peerId)) {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUserModel.id)
-            .update({'chatWiths.$peerId': true});
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(peerId)
-            .update({'chatWiths.${currentUserModel.id}': true});
-      }
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserModel.id)
+          .update({
+        'chatWiths.$peerId': DateTime.now().millisecondsSinceEpoch.toString()
+      });
+      FirebaseFirestore.instance.collection('users').doc(peerId).update({
+        'chatWiths.${currentUserModel.id}':
+            DateTime.now().millisecondsSinceEpoch.toString()
+      });
+      currentUserModel.chatWiths[peerId] =
+          DateTime.now().millisecondsSinceEpoch.toString();
 
       var documentReference = FirebaseFirestore.instance
           .collection('messages')

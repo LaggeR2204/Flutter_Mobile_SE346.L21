@@ -146,8 +146,11 @@ class MessengerPageState extends State<MessengerPage>
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('users')
-                    .where('chatWiths.${currentUserModel.id}', isEqualTo: true)
-                    //.limit(_limit)
+                    .where('chatWiths.${currentUserModel.id}',
+                        isNotEqualTo: false)
+                    .orderBy('chatWiths.${currentUserModel.id}',
+                        descending: true)
+                    .limit(_limit)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
