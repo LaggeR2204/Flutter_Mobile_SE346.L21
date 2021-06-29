@@ -120,7 +120,8 @@ class Chat extends StatelessWidget {
                     },
                   ),
                   RoundedButton(
-                    text: "Hide messages with ${peerName}",
+                    text: "Hide this conversation",
+                    //text: "Hide messages with ${peerName}",
                     press: () {
                       FirebaseFirestore.instance
                           .collection('users')
