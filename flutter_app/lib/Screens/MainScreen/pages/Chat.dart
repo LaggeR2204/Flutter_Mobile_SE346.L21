@@ -283,25 +283,22 @@ class _ChatScreenState extends State<ChatScreen> {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
-
+      String time = DateTime.now().millisecondsSinceEpoch.toString();
       FirebaseFirestore.instance
           .collection('users')
           .doc(currentUserModel.id)
-          .update({
-        'chatWiths.$peerId': DateTime.now().millisecondsSinceEpoch.toString()
-      });
-      FirebaseFirestore.instance.collection('users').doc(peerId).update({
-        'chatWiths.${currentUserModel.id}':
-            DateTime.now().millisecondsSinceEpoch.toString()
-      });
-      currentUserModel.chatWiths[peerId] =
-          DateTime.now().millisecondsSinceEpoch.toString();
+          .update({'chatWiths.$peerId': time});
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(peerId)
+          .update({'chatWiths.${currentUserModel.id}': time});
+      currentUserModel.chatWiths[peerId] = time;
 
       var documentReference = FirebaseFirestore.instance
           .collection('messages')
           .doc(groupChatId)
           .collection(groupChatId)
-          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+          .doc(time);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(
@@ -309,7 +306,7 @@ class _ChatScreenState extends State<ChatScreen> {
           {
             'idFrom': id,
             'idTo': peerId,
-            'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+            'timestamp': time,
             'content': content,
             'type': type
           },

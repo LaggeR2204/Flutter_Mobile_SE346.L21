@@ -40,6 +40,10 @@ class MessengerPageState extends State<MessengerPage>
   }
 
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
+    String id = currentUserModel.id;
+    String peerId = document.data()['id'];
+    String groupChatId =
+        (id.hashCode <= peerId.hashCode) ? '$id-$peerId' : '$peerId-$id';
     return Container(
       child: FlatButton(
         child: Row(
@@ -66,20 +70,32 @@ class MessengerPageState extends State<MessengerPage>
                     Container(
                       child: Text(
                         document.data()['displayName'],
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       alignment: Alignment.centerLeft,
                       margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
                     ),
-                    ((document.data()['bio'] != "")
-                        ? Container(
-                            child: Text('About me: ${document.data()['bio']}'),
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('messages')
+                            .doc(groupChatId)
+                            .collection(groupChatId)
+                            .orderBy('timestamp', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          String fromUser =
+                              (snapshot.data.docs[0].data()['idFrom'] !=
+                                      currentUserModel.id)
+                                  ? ""
+                                  : "You: ";
+                          return Container(
+                            child: Text(
+                                '${fromUser}${snapshot.data.docs[0].data()['content']}'),
                             alignment: Alignment.centerLeft,
                             margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                          )
-                        : Container(
-                            height: 0,
-                          ))
+                          );
+                        }),
                   ],
                 ),
                 margin: EdgeInsets.only(left: 20.0),
