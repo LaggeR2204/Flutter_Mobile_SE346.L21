@@ -65,8 +65,7 @@ class HomePageState extends State<HomePage> {
         currentIndex: _currentIndex,
         onTap: (int index) {
           setState(() {
-            _pageController.animateToPage(index,
-                duration: Duration(milliseconds: 500), curve: Curves.ease);
+            _pageController.jumpToPage(index);
           });
         },
         items: allNavigationItems.map((NavigationItem navigationItem) {
