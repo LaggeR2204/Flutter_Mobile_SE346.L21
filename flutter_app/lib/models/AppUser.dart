@@ -18,7 +18,8 @@ class AppUser {
       this.bio,
       this.followers,
       this.following,
-      this.chatWiths});
+      this.chatWiths,
+      });
 
   factory AppUser.fromDocument(DocumentSnapshot document) {
     return AppUser(
@@ -29,6 +30,19 @@ class AppUser {
         bio: document['bio'],
         followers: document['followers'],
         following: document['following'],
-        chatWiths: document['chatWiths']);
+        chatWiths: document['chatWiths'])
+    ;
+  }
+  factory AppUser.fromMap(Map<String, dynamic> data){
+    return AppUser(
+      email: data['email'],
+      photoUrl: data['photoUrl'],
+      id: data['id'],
+      displayName: data['displayName'],
+      bio: data['bio'],
+      followers: data['followers'],
+      following: data['following'],
+      chatWiths: data['chatWiths']
+    );
   }
 }

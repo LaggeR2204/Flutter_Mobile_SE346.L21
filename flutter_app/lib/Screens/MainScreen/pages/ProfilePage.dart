@@ -322,6 +322,7 @@ class ProfilePageState extends State<ProfilePage>
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
+
             return Container(
                 alignment: FractionalOffset.center,
                 child: CircularProgressIndicator());
