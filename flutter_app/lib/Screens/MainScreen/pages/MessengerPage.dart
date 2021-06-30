@@ -92,7 +92,9 @@ class MessengerPageState extends State<MessengerPage>
                                     : "You: ";
                             return Container(
                               child: Text(
-                                  '${fromUser}${snapshot.data.docs[0].data()['content']}'),
+                                '${fromUser}${snapshot.data.docs[0].data()['content']}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               alignment: Alignment.centerLeft,
                               margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                             );
