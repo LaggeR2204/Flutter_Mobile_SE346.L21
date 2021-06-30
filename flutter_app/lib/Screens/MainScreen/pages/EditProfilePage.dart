@@ -39,83 +39,74 @@ class EditProfilePage_State extends State<EditProfilePage> {
   _selectNewImage(BuildContext parentContext) async {
     Size size = MediaQuery.of(context).size;
     return showModalBottomSheet(
-      context: context,
-      builder: (context){
-        return Container(
-          color: Color(0xFF737373),
-          height: 400,
-          child: Container(
-            decoration: BoxDecoration(
-              color: appPrimaryLightColor,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(29),
-                topRight:  const Radius.circular(29),
-              )
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(
-                  Icons.remove,
-                  color: Colors.grey
-                ),
-                const Text(
-                  'Upload Photo',
-                  style: TextStyle(
-                    fontSize: 25.0,
+        context: context,
+        builder: (context) {
+          return Container(
+            color: Color(0xFF737373),
+            height: 300,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: appPrimaryLightColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(29),
+                    topRight: const Radius.circular(29),
+                  )),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.remove, color: Colors.grey),
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-                SizedBox(height: 10,),
-                RoundedButton(
-                  text: "Take a photo",
-                  press: () async {
-                    Navigator.pop(context);
-                    PickedFile imageFile = await imagePicker.getImage(
-                        source: ImageSource.camera,
-                        maxWidth: 1920,
-                        maxHeight: 1200,
-                        imageQuality: 80);
-                    setState(() {
-                      file = File(imageFile.path);
-                      isDeleteProfileImage = false;
-                    });
-                  },
-                ),
-                RoundedButton(
-                  text: "Choose from Gallery",
-                  press: () async {
-                    Navigator.of(context).pop();
-                    PickedFile imageFile = await imagePicker.getImage(
-                        source: ImageSource.gallery,
-                        maxWidth: 1920,
-                        maxHeight: 1200,
-                        imageQuality: 80);
-                    setState(() {
-                      file = File(imageFile.path);
-                      isDeleteProfileImage = false;
-                    });
-                  },
-                ),
-                RoundedButton(
-                  text: "Delete Profile Image",
-                  press:  () {
-                    setState(() {
-                      isDeleteProfileImage = true;
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                RoundedButton(
-                  text: "Cancel",
-                  press:  () => Navigator.pop(context),
-                ),
-              ],
+                  RoundedButton(
+                    text: "Take a photo",
+                    press: () async {
+                      Navigator.pop(context);
+                      PickedFile imageFile = await imagePicker.getImage(
+                          source: ImageSource.camera,
+                          maxWidth: 1920,
+                          maxHeight: 1200,
+                          imageQuality: 80);
+                      setState(() {
+                        file = File(imageFile.path);
+                        isDeleteProfileImage = false;
+                      });
+                    },
+                  ),
+                  RoundedButton(
+                    text: "Choose from Gallery",
+                    press: () async {
+                      Navigator.of(context).pop();
+                      PickedFile imageFile = await imagePicker.getImage(
+                          source: ImageSource.gallery,
+                          maxWidth: 1920,
+                          maxHeight: 1200,
+                          imageQuality: 80);
+                      setState(() {
+                        file = File(imageFile.path);
+                        isDeleteProfileImage = false;
+                      });
+                    },
+                  ),
+                  RoundedButton(
+                    text: "Delete Profile Image",
+                    press: () {
+                      setState(() {
+                        isDeleteProfileImage = true;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  RoundedButton(
+                    text: "Cancel",
+                    press: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 
   changeProfileImage(BuildContext context) async {
@@ -134,11 +125,11 @@ class EditProfilePage_State extends State<EditProfilePage> {
 
   reloadCurrentModelUserData() async {
     DocumentSnapshot userRecord = await ref.doc(currentUserModel.id).get();
-          if (userRecord.data() != null) {}
-          userRecord = await ref.doc(currentUserModel.id).get();
+    if (userRecord.data() != null) {}
+    userRecord = await ref.doc(currentUserModel.id).get();
 
-          currentUserModel = AppUser.fromDocument(userRecord);
-          print("[IN-FUNCTION edited photo url] " + currentUserModel.photoUrl);
+    currentUserModel = AppUser.fromDocument(userRecord);
+    print("[IN-FUNCTION edited photo url] " + currentUserModel.photoUrl);
   }
 
   applyChanges() async {
@@ -149,38 +140,33 @@ class EditProfilePage_State extends State<EditProfilePage> {
       ref.delete();
     }
     print("[Ten] " + nameController.text);
-    if(file != null){
-      uploadImage(file).then((data) => 
-        FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUserModel.id)
-          .update({
+    if (file != null) {
+      uploadImage(file).then((data) => FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUserModel.id)
+              .update({
             "photoUrl": data,
             "displayName": nameController.text,
             "bio": bioController.text,
-          })
-          .whenComplete(() async => {
-            reloadCurrentModelUserData()
-          })
-      );
+          }).whenComplete(() async => {reloadCurrentModelUserData()}));
       file = null;
-    } else if(isDeleteProfileImage){
+    } else if (isDeleteProfileImage) {
       FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUserModel.id)
-            .update({
-              "photoUrl": "",
-              "displayName": nameController.text,
-              "bio": bioController.text,
-        });
+          .collection('users')
+          .doc(currentUserModel.id)
+          .update({
+        "photoUrl": "",
+        "displayName": nameController.text,
+        "bio": bioController.text,
+      });
     } else {
       FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUserModel.id)
-            .update({
-              "displayName": nameController.text,
-              "bio": bioController.text,
-        });
+          .collection('users')
+          .doc(currentUserModel.id)
+          .update({
+        "displayName": nameController.text,
+        "bio": bioController.text,
+      });
     }
   }
 
@@ -222,113 +208,118 @@ class EditProfilePage_State extends State<EditProfilePage> {
         return true;
       },
       child: FutureBuilder(
-        future: FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUserModel.id)
-            .get(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Container(
-                alignment: FractionalOffset.center,
-                child: CircularProgressIndicator());
+          future: FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUserModel.id)
+              .get(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return Container(
+                  alignment: FractionalOffset.center,
+                  child: CircularProgressIndicator());
 
-          AppUser user = AppUser.fromDocument(snapshot.data);
+            AppUser user = AppUser.fromDocument(snapshot.data);
 
-          nameController.text = user.displayName;
-          bioController.text = user.bio;
+            nameController.text = user.displayName;
+            bioController.text = user.bio;
 
-          return Scaffold(
-            appBar: AppBar(
-              brightness: Brightness.dark,
-              automaticallyImplyLeading: true,
-              flexibleSpace: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: <Color>[appPrimaryColor, appPrimaryColor2],
-                  ),
-                ),
-              ),
-              title: Container(
-                child: Text("Edit Profile"),
-              ),
-              actions: [
-                IconButton(
-                    icon: Icon(Icons.check),
-                    onPressed: () {
-                      applyChanges().then(
-                        Navigator.maybePop(context)
-                      );
-                    })
-              ],
-            ),
-            body: SingleChildScrollView(
-              child: Column(
-              children: <Widget>[
-                SizedBox(height: 40,),
-                SizedBox(
-                  height: 115,
-                  width: 115,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    fit: StackFit.expand,
-                    children: [
-                      (file != null)
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.file(
-                            file,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.fitHeight,
-                          ),
-                        )
-                      : (isDeleteProfileImage == true?
-                      Image.asset(
-                              "assets/images/defaultProfileImage.png")
-                      :
-                      ((currentUserModel.photoUrl != "")
-                          ? CircleAvatar(
-                              backgroundImage:
-                                  NetworkImage(currentUserModel.photoUrl),
-                              radius: 50.0,
-                            )
-                          : Image.asset(
-                              "assets/images/defaultProfileImage.png"))
+            return Scaffold(
+                appBar: AppBar(
+                  brightness: Brightness.dark,
+                  automaticallyImplyLeading: true,
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: <Color>[appPrimaryColor, appPrimaryColor2],
                       ),
-                      Positioned(
-                        bottom: -10,
-                        right: -25,
-                        child: RawMaterialButton(
-                          onPressed: () {
-                            changeProfileImage(context);
-                          },
-                          elevation: 2.0,
-                          fillColor: Colors.white70,
-                          //fillColor: Color(0x60FFFFFF),
-                          child: Icon(Icons.camera_alt_outlined, color: appPrimaryColor, size: 20,),
-                          padding: EdgeInsets.all(10.0),
-                          shape: CircleBorder(),
-                        )),
-                    ],
+                    ),
                   ),
+                  title: Container(
+                    child: Text("Edit Profile"),
+                  ),
+                  actions: [
+                    IconButton(
+                        icon: Icon(Icons.check),
+                        onPressed: () {
+                          applyChanges().then(Navigator.maybePop(context));
+                        })
+                  ],
                 ),
-                SizedBox(height: 20,),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                body: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      buildTextField(name: "Name", controller: nameController),
-                      buildTextField(name: "Bio", controller: bioController),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      SizedBox(
+                        height: 115,
+                        width: 115,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          fit: StackFit.expand,
+                          children: [
+                            (file != null)
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.file(
+                                      file,
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                  )
+                                : (isDeleteProfileImage == true
+                                    ? Image.asset(
+                                        "assets/images/defaultProfileImage.png")
+                                    : ((currentUserModel.photoUrl != "")
+                                        ? CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                currentUserModel.photoUrl),
+                                            radius: 50.0,
+                                          )
+                                        : Image.asset(
+                                            "assets/images/defaultProfileImage.png"))),
+                            Positioned(
+                                bottom: -10,
+                                right: -25,
+                                child: RawMaterialButton(
+                                  onPressed: () {
+                                    changeProfileImage(context);
+                                  },
+                                  elevation: 2.0,
+                                  fillColor: Colors.white70,
+                                  //fillColor: Color(0x60FFFFFF),
+                                  child: Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: appPrimaryColor,
+                                    size: 20,
+                                  ),
+                                  padding: EdgeInsets.all(10.0),
+                                  shape: CircleBorder(),
+                                )),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: <Widget>[
+                            buildTextField(
+                                name: "Name", controller: nameController),
+                            buildTextField(
+                                name: "Bio", controller: bioController),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            )
-          );
-        }),
+                ));
+          }),
     );
   }
 }

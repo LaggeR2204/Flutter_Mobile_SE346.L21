@@ -20,10 +20,7 @@ class SearchPageState extends State<SearchPage> {
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              colors: <Color>[
-                appPrimaryColor,
-                appPrimaryColor2
-              ],
+              colors: <Color>[appPrimaryColor, appPrimaryColor2],
             ),
           ),
         ),
@@ -32,7 +29,7 @@ class SearchPageState extends State<SearchPage> {
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: appPrimaryLightColor,
-            borderRadius:  BorderRadius.circular(29),
+            borderRadius: BorderRadius.circular(29),
           ),
           child: TextField(
             cursorColor: appPrimaryColor,
@@ -41,12 +38,15 @@ class SearchPageState extends State<SearchPage> {
               hintText: 'Search',
               suffixIcon: Icon(Icons.search),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(left: 15, bottom: 10, top: 10, right: 15),
+              contentPadding:
+                  EdgeInsets.only(left: 15, bottom: 10, top: 10, right: 15),
             ),
           ),
         ),
       ),
-      body: Center(child: Text("Search Page"),),
+      body: Center(
+        child: Text("Search Page"),
+      ),
     );
   }
 }

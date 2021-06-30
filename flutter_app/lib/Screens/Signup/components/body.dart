@@ -21,111 +21,121 @@ class Body extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-            SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: size.height * 0.05,),
-                  Text("Let's Get Started!", style: TextStyle(fontSize: size.height * 0.05, color: Colors.black),),
-                  SizedBox(height: size.height * 0.05,),
-                  TextFieldContainer(
-                    child: RoundedTextField(
-                      icon: Icons.email,
-                      controller: emailController,
-                      hintText: "Email",
-                      onChanged: (value){},
-                    ),
+          SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                Text(
+                  "Let's Get Started!",
+                  style: TextStyle(
+                      fontSize: size.height * 0.05, color: Colors.black),
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                TextFieldContainer(
+                  child: RoundedTextField(
+                    icon: Icons.email,
+                    controller: emailController,
+                    hintText: "Email",
+                    onChanged: (value) {},
                   ),
-                  TextFieldContainer(
-                    child: RoundedTextField(
-                      icon: Icons.person,
-                      controller: usernameController,
-                      hintText: "Username",
-                      onChanged: (value){},
-                    ),
+                ),
+                TextFieldContainer(
+                  child: RoundedTextField(
+                    icon: Icons.person,
+                    controller: usernameController,
+                    hintText: "Username",
+                    onChanged: (value) {},
                   ),
-                  TextFieldContainer(
-                    child: RoundedPasswordField(
-                      hintText: "Password",
-                      controller: passwordController,
-                      onChanged: (value){},
-                    ),
+                ),
+                TextFieldContainer(
+                  child: RoundedPasswordField(
+                    hintText: "Password",
+                    controller: passwordController,
+                    onChanged: (value) {},
                   ),
-                  TextFieldContainer(
-                    child: RoundedPasswordField(
-                      hintText: "Repeat Password",
-                      controller: repeatPasswordController,
-                      onChanged: (value){},
-                    ),
+                ),
+                TextFieldContainer(
+                  child: RoundedPasswordField(
+                    hintText: "Repeat Password",
+                    controller: repeatPasswordController,
+                    onChanged: (value) {},
                   ),
-                  RoundedButton(
-                      text: "SIGN UP",
-                      press: () {
-                        if(isEmpty()){
-                          showDialog(
-                            context: context, 
-                            builder: (_) => new AlertDialog(
-                                          title: new Text("Error!!!"),
-                                          content: new Text("Nhap het cac field dee"),
-                                          actions: <Widget>[
-                                            FlatButton(
-                                              child: Text("OK", style: TextStyle(color: appPrimaryColor),),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            )
-                                          ],
-                                      ),
-                          );
-                        }
-                        else if (repeatPasswordController.value.text != passwordController.value.text){
-                          showDialog(
-                            context: context, 
-                            builder: (_) => new AlertDialog(
-                                          title: new Text("Error!!!"),
-                                          content: new Text("Pass chua trung"),
-                                          actions: <Widget>[
-                                            FlatButton(
-                                              child: Text("OK", style: TextStyle(color: appPrimaryColor),),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            )
-                                          ],
-                                      ),
-                          );
-                        }
-                        else {
-                          signUp(context);
-                        }
-                      },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("Already an account? "),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return LoginScreen();
+                ),
+                RoundedButton(
+                  text: "SIGN UP",
+                  press: () {
+                    if (isEmpty()) {
+                      showDialog(
+                        context: context,
+                        builder: (_) => new AlertDialog(
+                          title: new Text("Error!!!"),
+                          content: new Text("Nhap het cac field dee"),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text(
+                                "OK",
+                                style: TextStyle(color: appPrimaryColor),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
                               },
                             )
-                          );
-                        },
-                        child: Text(
-                          "Login here",
-                          style: TextStyle(color: appPrimaryColor),
+                          ],
                         ),
+                      );
+                    } else if (repeatPasswordController.value.text !=
+                        passwordController.value.text) {
+                      showDialog(
+                        context: context,
+                        builder: (_) => new AlertDialog(
+                          title: new Text("Error!!!"),
+                          content: new Text("Pass chua trung"),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text(
+                                "OK",
+                                style: TextStyle(color: appPrimaryColor),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    } else {
+                      signUp(context);
+                    }
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Already an account? "),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return LoginScreen();
+                          },
+                        ));
+                      },
+                      child: Text(
+                        "Login here",
+                        style: TextStyle(color: appPrimaryColor),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
+          ),
         ],
       ),
     );
@@ -138,29 +148,31 @@ class Body extends StatelessWidget {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void signUp(BuildContext context){
-    RegisterWithFirebase(context,emailController.value.text, usernameController.value.text, passwordController.value.text);
+  void signUp(BuildContext context) {
+    RegisterWithFirebase(context, emailController.value.text,
+        usernameController.value.text, passwordController.value.text);
   }
 
-  bool isEmpty(){
-    if (emailController.value.text != "" && usernameController.value.text != "" && passwordController.value.text != "" && repeatPasswordController.value.text != ""){
-        return false;
+  bool isEmpty() {
+    if (emailController.value.text != "" &&
+        usernameController.value.text != "" &&
+        passwordController.value.text != "" &&
+        repeatPasswordController.value.text != "") {
+      return false;
     }
     return true;
   }
 
-  void RegisterWithFirebase(BuildContext context,String _email, String _username, String _password) async {
+  void RegisterWithFirebase(BuildContext context, String _email,
+      String _username, String _password) async {
     print("[SIGNUP ACC] " + _email + " " + _password + " " + _username);
     try {
-      final User user = (await _auth
-          .createUserWithEmailAndPassword(
-              email: _email, password: _password)).user;
+      final User user = (await _auth.createUserWithEmailAndPassword(
+              email: _email, password: _password))
+          .user;
       try {
         user.sendEmailVerification();
-      } 
-      catch (e) {
-
-      }
+      } catch (e) {}
 
       //user.updateProfile(displayName: _username);
       // .then((onValue) {
@@ -172,37 +184,42 @@ class Body extends StatelessWidget {
       addUserInfoToStorage(user);
 
       showDialog(
-          context: context, 
-          builder: (_) => new AlertDialog(
-                        title: new Text("ERROR!!!"),
-                        content: new Text("Sign up success, verify your email before login"),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                    ),
-        );
-    }
-    catch (error) {
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: new Text("ERROR!!!"),
+          content: new Text("Sign up success, verify your email before login"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                "OK",
+                style: TextStyle(color: appPrimaryColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        ),
+      );
+    } catch (error) {
       if (error.code == "ERROR_INVALID_EMAIL") {
         showDialog(
-          context: context, 
+          context: context,
           builder: (_) => new AlertDialog(
-                        title: new Text("ERROR!!!"),
-                        content: new Text("Invalid email"),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                    ),
+            title: new Text("ERROR!!!"),
+            content: new Text("Invalid email"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  "OK",
+                  style: TextStyle(color: appPrimaryColor),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
         );
         emailController.clear();
         usernameController.clear();
@@ -210,19 +227,22 @@ class Body extends StatelessWidget {
         repeatPasswordController.clear();
       } else if (error.code == "ERROR_EMAIL_ALREADY_IN_USE") {
         showDialog(
-          context: context, 
+          context: context,
           builder: (_) => new AlertDialog(
-                        title: new Text("ERROR!!!"),
-                        content: new Text("Email already in use"),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                    ),
+            title: new Text("ERROR!!!"),
+            content: new Text("Email already in use"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  "OK",
+                  style: TextStyle(color: appPrimaryColor),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
         );
         emailController.clear();
         usernameController.clear();
@@ -230,19 +250,22 @@ class Body extends StatelessWidget {
         repeatPasswordController.clear();
       } else if (error.code == "ERROR_WEAK_PASSWORD") {
         showDialog(
-          context: context, 
+          context: context,
           builder: (_) => new AlertDialog(
-                        title: new Text("ERROR!!!"),
-                        content: new Text("Your password is too weak"),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text("OK", style: TextStyle(color: appPrimaryColor),),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                    ),
+            title: new Text("ERROR!!!"),
+            content: new Text("Your password is too weak"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  "OK",
+                  style: TextStyle(color: appPrimaryColor),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
         );
         passwordController.clear();
         repeatPasswordController.clear();
@@ -259,22 +282,24 @@ class Body extends StatelessWidget {
     // }
     // DocumentSnapshot userRecord = await ref.doc(user.uid).get();
     // if (userRecord.data() == null) {
-      // no user record exists, time to create
+    // no user record exists, time to create
 
-      String userName = usernameController.text;
+    String userName = usernameController.text;
 
-      if (userName != null || userName.length != 0) {
-        ref.doc(user.uid).set({
-          "id": user.uid,
-          "photoUrl": "",//FirebaseStorage.instance.ref().child("defaultProfileImage.png"),
-          "email": user.email,
-          "displayName": userName,
-          "bio": "",
-          "followers": {},
-          "following": {},
-        });
-      }
-      //userRecord = await ref.doc(user.uid).get();
+    if (userName != null || userName.length != 0) {
+      ref.doc(user.uid).set({
+        "id": user.uid,
+        "photoUrl":
+            "", //FirebaseStorage.instance.ref().child("defaultProfileImage.png"),
+        "email": user.email,
+        "displayName": userName,
+        "bio": "",
+        "followers": {},
+        "following": {},
+        "chatWiths": {},
+      });
+    }
+    //userRecord = await ref.doc(user.uid).get();
     //}
 
     //currentUserModel = AppUser.fromDocument(userRecord);
