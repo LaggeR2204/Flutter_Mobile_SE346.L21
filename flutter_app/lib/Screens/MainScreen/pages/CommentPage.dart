@@ -1,8 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "dart:async";
 import '../../../main.dart';
-
 
 class CommentPage extends StatefulWidget {
   final String postId;
@@ -10,6 +10,7 @@ class CommentPage extends StatefulWidget {
   final String postMediaUrl;
 
   const CommentPage({this.postId, this.postOwner, this.postMediaUrl});
+
   @override
   _CommentPageState createState() => _CommentPageState(
       postId: this.postId,
@@ -35,9 +36,15 @@ class _CommentPageState extends State<CommentPage> {
       appBar: AppBar(
         title: Text(
           "Comments",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        backgroundColor: Color(0xffff008e),
       ),
       body: buildPage(),
     );
@@ -47,8 +54,7 @@ class _CommentPageState extends State<CommentPage> {
     return Column(
       children: [
         Expanded(
-          child:
-          buildComments(),
+          child: buildComments(),
         ),
         Divider(),
         ListTile(
@@ -57,15 +63,20 @@ class _CommentPageState extends State<CommentPage> {
             decoration: InputDecoration(labelText: 'Write a comment...'),
             onFieldSubmitted: addComment,
           ),
-          trailing: OutlineButton(onPressed: (){addComment(_commentController.text);}, borderSide: BorderSide.none, child: Text("Post"),),
+          trailing: OutlineButton(
+            onPressed: () {
+              addComment(_commentController.text);
+            },
+            borderSide: BorderSide.none,
+            child: Text("Post"),
+          ),
         ),
       ],
     );
   }
 
-
   Widget buildComments() {
-    if (this.didFetchComments == false){
+    if (this.didFetchComments == false) {
       return FutureBuilder<List<Comment>>(
           future: getComments(),
           builder: (context, snapshot) {
@@ -82,9 +93,7 @@ class _CommentPageState extends State<CommentPage> {
           });
     } else {
       // for optimistic updating
-      return ListView(
-          children: this.fetchedComments
-      );
+      return ListView(children: this.fetchedComments);
     }
   }
 
@@ -112,7 +121,8 @@ class _CommentPageState extends State<CommentPage> {
       "comment": comment,
       "timestamp": Timestamp.now(),
       "avatarUrl": currentUserModel.photoUrl,
-      "userId": currentUserModel.id
+      "userId": currentUserModel.id,
+      "displayName": currentUserModel.displayName,
     });
 
     //adds to postOwner's activity feed
@@ -132,34 +142,36 @@ class _CommentPageState extends State<CommentPage> {
 
     // add comment to the current listview for an optimistic update
     setState(() {
-      fetchedComments = List.from(fetchedComments)..add(Comment(
+      fetchedComments = List.from(fetchedComments)
+        ..add(Comment(
           comment: comment,
           timestamp: Timestamp.now(),
           avatarUrl: currentUserModel.photoUrl,
-          userId: currentUserModel.id
-      ));
+          userId: currentUserModel.id,
+          displayName: currentUserModel.displayName,
+        ));
     });
   }
 }
 
 class Comment extends StatelessWidget {
-  final String username;
+  final String displayName;
   final String userId;
   final String avatarUrl;
   final String comment;
   final Timestamp timestamp;
 
   Comment(
-      {this.username,
-        this.userId,
-        this.avatarUrl,
-        this.comment,
-        this.timestamp});
+      {this.displayName,
+      this.userId,
+      this.avatarUrl,
+      this.comment,
+      this.timestamp});
 
   factory Comment.fromDocument(DocumentSnapshot document) {
     var data = document.data();
     return Comment(
-      username: data['username'],
+      displayName: data['displayName'],
       userId: data['userId'],
       comment: data["comment"],
       timestamp: data["timestamp"],
@@ -171,13 +183,79 @@ class Comment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        ListTile(
+        /*           ListTile(
           title: Text(comment),
           leading: CircleAvatar(
             backgroundImage: NetworkImage(avatarUrl),
           ),
         ),
-        Divider(),
+        Divider(),*/
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(left: 20, right: 10, top: 20),
+              width: 40,
+              height: 40,
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(avatarUrl),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 20, right: 5),
+                      child: Text(displayName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20, right: 5),
+                      child: Text(comment,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          )),
+                    )
+                  ],
+                ),
+/*                RichText(
+                    text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                        children: <TextSpan>[
+                      TextSpan(
+                          text: displayName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      TextSpan(text: ' '),
+                      TextSpan(
+                          text: comment,
+                          style: TextStyle(fontSize: 16, color: Colors.black))
+                    ])),*/
+                Container(
+                  margin: EdgeInsets.only(right: 10, top: 4),
+                  child: Text(
+                    "1 hours ago",
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
