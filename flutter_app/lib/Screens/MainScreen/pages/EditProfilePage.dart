@@ -37,7 +37,6 @@ class EditProfilePage_State extends State<EditProfilePage> {
   }
 
   _selectNewImage(BuildContext parentContext) async {
-    Size size = MediaQuery.of(context).size;
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -68,10 +67,12 @@ class EditProfilePage_State extends State<EditProfilePage> {
                           maxWidth: 1920,
                           maxHeight: 1200,
                           imageQuality: 80);
-                      setState(() {
-                        file = File(imageFile.path);
-                        isDeleteProfileImage = false;
-                      });
+                      if (imageFile != null) {
+                        setState(() {
+                          file = File(imageFile.path);
+                          isDeleteProfileImage = false;
+                        });
+                      }
                     },
                   ),
                   RoundedButton(
@@ -83,10 +84,12 @@ class EditProfilePage_State extends State<EditProfilePage> {
                           maxWidth: 1920,
                           maxHeight: 1200,
                           imageQuality: 80);
-                      setState(() {
-                        file = File(imageFile.path);
-                        isDeleteProfileImage = false;
-                      });
+                      if (imageFile != null) {
+                        setState(() {
+                          file = File(imageFile.path);
+                          isDeleteProfileImage = false;
+                        });
+                      }
                     },
                   ),
                   RoundedButton(

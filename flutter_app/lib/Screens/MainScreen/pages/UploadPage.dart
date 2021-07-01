@@ -333,37 +333,30 @@ class _UploadPageState extends State<UploadPage> {
       address = first;
     });
   }
+
   _selectNewImage(BuildContext parentContext) async {
     Size size = MediaQuery.of(context).size;
     return showModalBottomSheet(
         context: context,
-        builder: (context){
+        builder: (context) {
           return Container(
             color: Color(0xFF737373),
-            height: 400,
+            height: 235,
             child: Container(
               decoration: BoxDecoration(
                   color: appPrimaryLightColor,
                   borderRadius: BorderRadius.only(
                     topLeft: const Radius.circular(29),
-                    topRight:  const Radius.circular(29),
-                  )
-              ),
+                    topRight: const Radius.circular(29),
+                  )),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Icon(
-                      Icons.remove,
-                      color: Colors.grey
+                  Icon(Icons.remove, color: Colors.grey),
+                  SizedBox(
+                    height: 10,
                   ),
-                  const Text(
-                    'Upload Photo',
-                    style: TextStyle(
-                      fontSize: 25.0,
-                    ),
-                  ),
-                  SizedBox(height: 10,),
                   RoundedButton(
                     text: "Take a photo",
                     press: () async {
@@ -373,9 +366,11 @@ class _UploadPageState extends State<UploadPage> {
                           maxWidth: 1920,
                           maxHeight: 1200,
                           imageQuality: 80);
-                      setState(() {
-                        file = File(imageFile.path);
-                      });
+                      if (imageFile != null) {
+                        setState(() {
+                          file = File(imageFile.path);
+                        });
+                      }
                     },
                   ),
                   RoundedButton(
@@ -387,55 +382,66 @@ class _UploadPageState extends State<UploadPage> {
                           maxWidth: 1920,
                           maxHeight: 1200,
                           imageQuality: 80);
-                      setState(() {
-                        file = File(imageFile.path);
-
-                      });
+                      if (imageFile != null) {
+                        setState(() {
+                          file = File(imageFile.path);
+                        });
+                      }
                     },
                   ),
                   RoundedButton(
                     text: "Cancel",
-                    press:  () => Navigator.pop(context),
+                    press: () => Navigator.pop(context),
                   ),
                 ],
               ),
             ),
           );
-        }
-    );
+        });
   }
+
   getImage(BuildContext context) async {
     file = null;
     await _selectNewImage(context);
   }
+
   @override
   Widget build(BuildContext context) {
     return file == null
         ? Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-                backgroundColor: Color(0xffff008e),
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    setState(() {
-                      file = null;
-                    });
-                    Navigator.of(context).pop();
-                  },
+              brightness: Brightness.dark,
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: <Color>[appPrimaryColor, appPrimaryColor2],
+                  ),
                 ),
-                title: const Text(
+              ),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  setState(() {
+                    file = null;
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: const Text(
                 "Choose Image",
-                  style: const TextStyle(color: Colors.black),
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add_circle_rounded),
+                  onPressed: () {
+                    getImage(context);
+                  },
+                )
+              ],
             ),
-            actions:[
-              IconButton(
-                icon: Icon(Icons.add_circle_rounded),
-                onPressed: (){getImage(context);},
-              )
-            ],
-            ),
-
           )
         : Scaffold(
             resizeToAvoidBottomInset: false,
@@ -631,6 +637,7 @@ void postToFireStore(
 
   reference.add({
     "ownerId": currentUserModel.id,
+    "displayName": currentUserModel.displayName,
     "location": location,
     "likes": {},
     "mediaUrl": mediaUrl,

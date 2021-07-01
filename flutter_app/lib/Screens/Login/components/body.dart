@@ -10,6 +10,7 @@ import 'package:flutter_app/components/TextFieldContainer.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/AppUser.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final ref = FirebaseFirestore.instance.collection('users');
 
@@ -44,14 +45,12 @@ class Body extends StatelessWidget {
                     icon: Icons.email,
                     controller: emailController,
                     hintText: "Email",
-                    onChanged: (value) {},
                   ),
                 ),
                 TextFieldContainer(
                   child: RoundedPasswordField(
                     hintText: "Password",
                     controller: passwordController,
-                    onChanged: (value) {},
                   ),
                 ),
                 GestureDetector(
@@ -69,28 +68,7 @@ class Body extends StatelessWidget {
                 RoundedButton(
                   text: "LOGIN",
                   press: () {
-                    if (isEmpty()) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => new AlertDialog(
-                          title: new Text("Error!!!"),
-                          content: new Text("Nhap het cac field dee"),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                "OK",
-                                style: TextStyle(color: appPrimaryColor),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        ),
-                      );
-                    } else {
-                      login(context);
-                    }
+                    login(context);
                   },
                 ),
                 Row(
@@ -130,20 +108,25 @@ class Body extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void login(BuildContext context) {
-    LoginWithFirebase(
-        context, emailController.value.text, passwordController.value.text);
+    if (isEmpty()) {
+      Fluttertoast.showToast(msg: "Please enter all fields");
+    } else {
+      LoginWithFirebase(
+          context, emailController.value.text, passwordController.value.text);
+    }
   }
 
   bool isEmpty() {
-    if (emailController.value != null && passwordController.value != null)
+    if (emailController.value.text != "" &&
+        passwordController.value.text != "") {
       return false;
-    return true;
+    } else {
+      return true;
+    }
   }
 
   void LoginWithFirebase(
       BuildContext context, String _email, String _password) async {
-    //Dang nhap voi firebase
-    print("[ACC] " + _email + " " + _password);
     try {
       final User user = (await _auth.signInWithEmailAndPassword(
         email: _email,
@@ -184,10 +167,29 @@ class Body extends StatelessWidget {
         }
       } else {
         print("[ERROR] Null user");
+        showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+            title: new Text("ERROR!!!"),
+            content: new Text(
+                "Something went wrong, please stop restarting the app"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  "OK",
+                  style: TextStyle(color: appPrimaryColor),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+        );
       }
     } catch (e) {
       print("[ERROR] " + e.code);
-      if (e.code == "ERROR_WRONG_PASSWORD") {
+      if (e.code == "wrong-password") {
         showDialog(
           context: context,
           builder: (_) => new AlertDialog(
@@ -207,12 +209,13 @@ class Body extends StatelessWidget {
           ),
         );
         passwordController.clear();
-      } else if (e.code == "ERROR_USER_NOT_FOUND") {
+      } else if (e.code == "user-not-found") {
         showDialog(
           context: context,
           builder: (_) => new AlertDialog(
             title: new Text("ERROR!!!"),
-            content: new Text("User is not found"),
+            content: new Text(
+                "Your account could not be found, please register if you do not have an account"),
             actions: <Widget>[
               FlatButton(
                 child: Text(
@@ -228,7 +231,7 @@ class Body extends StatelessWidget {
         );
         passwordController.clear();
         emailController.clear();
-      } else if (e.code == "ERROR_INVALID_EMAIL") {
+      } else if (e.code == "invalid-email") {
         showDialog(
           context: context,
           builder: (_) => new AlertDialog(

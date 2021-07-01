@@ -11,11 +11,14 @@ class TextFieldContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    //final double appBarHeight = AppBar().preferredSize.height;
+    //print("[HEIGHT] " + appBarHeight.toString());
     return Container(
       margin: EdgeInsets.symmetric(vertical: 7),
-      padding: EdgeInsets.symmetric(horizontal: size.height * 0.02, vertical: 0),
+      padding:
+          EdgeInsets.symmetric(horizontal: size.height * 0.02, vertical: 0),
       width: size.width * 0.8,
-      height: size.height * 0.1,
+      height: 60,
       decoration: BoxDecoration(
         color: appPrimaryLightColor,
         borderRadius: BorderRadius.circular(29),

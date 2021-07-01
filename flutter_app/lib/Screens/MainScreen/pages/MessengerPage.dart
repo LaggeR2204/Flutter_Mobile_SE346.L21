@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/Chat.dart';
@@ -15,8 +17,14 @@ class MessengerPageState extends State<MessengerPage>
     with AutomaticKeepAliveClientMixin<MessengerPage> {
   @override
   void initState() {
-    super.initState();
     listScrollController.addListener(scrollListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    listScrollController.removeListener(scrollListener);
+    super.dispose();
   }
 
   // ensures state is kept when switching pages
@@ -30,6 +38,8 @@ class MessengerPageState extends State<MessengerPage>
   bool isLoading = false;
 
   void scrollListener() {
+    setState(() {});
+
     if (listScrollController.offset >=
             listScrollController.position.maxScrollExtent &&
         !listScrollController.position.outOfRange) {
@@ -45,6 +55,7 @@ class MessengerPageState extends State<MessengerPage>
     String groupChatId =
         (id.hashCode <= peerId.hashCode) ? '$id-$peerId' : '$peerId-$id';
     return Container(
+      height: 65,
       child: FlatButton(
         child: Row(
           children: <Widget>[
@@ -92,7 +103,9 @@ class MessengerPageState extends State<MessengerPage>
                                     : "You: ";
                             return Container(
                               child: Text(
-                                  '${fromUser}${snapshot.data.docs[0].data()['content']}'),
+                                '${fromUser}${snapshot.data.docs[0].data()['content']}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               alignment: Alignment.centerLeft,
                               margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                             );
@@ -187,8 +200,31 @@ class MessengerPageState extends State<MessengerPage>
                   } else {
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) =>
-                          buildItem(context, snapshot.data.docs[index]),
+                      itemBuilder: (context, index) {
+                        final itemPositionOffset = index *
+                            75; //itemSize (height) = 65, + margin(10) = 75
+                        final difference =
+                            listScrollController.offset - itemPositionOffset;
+                        final percent = 1 - (difference / 75);
+                        double opacity = percent;
+                        if (opacity < 0) {
+                          opacity = 0;
+                        } else if (opacity > 1) {
+                          opacity = 1;
+                        }
+                        return Opacity(
+                          opacity: opacity,
+                          child: Transform(
+                              alignment: Alignment.bottomCenter,
+                              transform: Matrix4.identity()
+                                ..scale(opacity, opacity),
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: buildItem(
+                                    context, snapshot.data.docs[index]),
+                              )),
+                        );
+                      },
                       itemCount: snapshot.data.docs.length,
                       controller: listScrollController,
                     );
