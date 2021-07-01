@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "dart:async";
 import '../../../main.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentPage extends StatefulWidget {
   final String postId;
@@ -75,6 +76,7 @@ class _CommentPageState extends State<CommentPage> {
     );
   }
 
+
   Widget buildComments() {
     if (this.didFetchComments == false) {
       return FutureBuilder<List<Comment>>(
@@ -138,6 +140,7 @@ class _CommentPageState extends State<CommentPage> {
       "timestamp": Timestamp.now(),
       "postId": postId,
       "mediaUrl": postMediaUrl,
+      "username": currentUserModel.displayName,
     });
 
     // add comment to the current listview for an optimistic update
@@ -183,13 +186,13 @@ class Comment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        /*           ListTile(
+       /* ListTile(
           title: Text(comment),
           leading: CircleAvatar(
             backgroundImage: NetworkImage(avatarUrl),
           ),
         ),
-        Divider(),*/
+        Divider()*/
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -248,7 +251,8 @@ class Comment extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(right: 10, top: 4),
                   child: Text(
-                    "1 hours ago",
+                    timeago.format(timestamp.toDate()),
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 ),
