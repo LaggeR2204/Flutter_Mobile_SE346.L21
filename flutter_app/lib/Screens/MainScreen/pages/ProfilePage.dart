@@ -79,19 +79,19 @@ class ProfilePageState extends State<ProfilePage>
     });
 
     //updates activity feed
-    // FirebaseFirestore.instance
-    //     .collection("insta_a_feed")
-    //     .doc(profileId)
-    //     .collection("items")
-    //     .doc(currentUserId)
-    //     .set({
-    //   "ownerId": profileId,
-    //   "username": FirebaseAuth.instance.currentUser.displayName,
-    //   "userId": currentUserId,
-    //   "type": "follow",
-    //   "userProfileImg": FirebaseAuth.instance.currentUser.photoURL,
-    //   "timestamp": DateTime.now()
-    // });
+    FirebaseFirestore.instance
+        .collection("feed")
+        .doc(profileId)
+        .collection("items")
+        .doc(currentUserId)
+        .set({
+      "ownerId": profileId,
+      "username": currentUserModel.displayName,
+      "userId": currentUserId,
+      "type": "follow",
+      "userProfileImg": currentUserModel.photoUrl,
+      "timestamp": DateTime.now()
+    });
   }
 
   unfollowUser() {
@@ -322,7 +322,6 @@ class ProfilePageState extends State<ProfilePage>
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-
             return Container(
                 alignment: FractionalOffset.center,
                 child: CircularProgressIndicator());

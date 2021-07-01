@@ -38,15 +38,15 @@ class ImagePost extends StatefulWidget {
     );
   }
 
-  factory ImagePost.fromMap(Map<String, dynamic> data){
-      return ImagePost(
-        location: data['location'],
-        mediaUrl: data['mediaUrl'],
-        likes: data['likes'],
-        description: data['description'],
-        ownerId: data['ownerId'],
-        postId: data['postId'],
-      );
+  factory ImagePost.fromMap(Map<String, dynamic> data) {
+    return ImagePost(
+      location: data['location'],
+      mediaUrl: data['mediaUrl'],
+      likes: data['likes'],
+      description: data['description'],
+      ownerId: data['ownerId'],
+      postId: data['postId'],
+    );
   }
 
   int getLikeCount(var likes) {
@@ -312,6 +312,7 @@ class _ImagePost extends State<ImagePost> {
       "type": "like",
       "userProfileImg": currentUserModel.photoUrl,
       "mediaUrl": mediaUrl,
+      "username": currentUserModel.displayName,
       "timestamp": DateTime.now(),
       "postId": postId,
     });
