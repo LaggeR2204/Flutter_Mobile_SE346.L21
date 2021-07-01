@@ -101,9 +101,9 @@ class _CommentPageState extends State<CommentPage> {
     List<Comment> comments = [];
 
     QuerySnapshot data = await FirebaseFirestore.instance
-        .collection("insta_comments")
-        .doc(postId)
         .collection("comments")
+        .doc(postId)
+        .collection("comments_in_post")
         .get();
     data.docs.forEach((DocumentSnapshot doc) {
       comments.add(Comment.fromDocument(doc));
@@ -137,6 +137,7 @@ class _CommentPageState extends State<CommentPage> {
       "timestamp": Timestamp.now(),
       "postId": postId,
       "mediaUrl": postMediaUrl,
+      "username": currentUserModel.displayName,
     });
 
     // add comment to the current listview for an optimistic update

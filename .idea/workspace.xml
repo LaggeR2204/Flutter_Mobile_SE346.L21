@@ -5,18 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b931d1d-962c-498e-b01a-5c1a3c3aa3aa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/flutter_app/assets/flare/Like.flr" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/CommentPage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/ProfilePage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/ProfilePage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/CommentPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/CommentPage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/TimelinePage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/TimelinePage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/UploadPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/lib/Screens/MainScreen/pages/UploadPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_app/lib/components/RoundedButton.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/lib/components/RoundedButton.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_app/lib/models/AppUser.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/lib/models/AppUser.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flutter_app/lib/models/Post.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/lib/models/Post.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flutter_app/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_app/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_app/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +38,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Code/DoAn/health_care" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="SDK Location" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -95,10 +90,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="498" y="202" key="#com.intellij.ide.util.TreeFileChooserDialog/0.0.1536.824@0.0.1536.824" timestamp="1622623211665" />
-    <state x="100" y="100" width="1336" height="624" key="AVDManager" timestamp="1624426582131">
+    <state x="100" y="100" width="1336" height="624" key="AVDManager" timestamp="1625136998472">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="100" y="100" width="1336" height="624" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1624426582131" />
+    <state x="100" y="100" width="1336" height="624" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1625136998472" />
     <state x="395" y="0" key="CommitChangelistDialog2" timestamp="1624103740085">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -107,22 +102,30 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="549" y="168" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1624825339144" />
-    <state width="1104" height="209" key="GridCell.Tab.0.bottom" timestamp="1624830191015">
+    <state width="1096" height="209" key="GridCell.Tab.0.bottom" timestamp="1625118129173">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1104" height="209" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1624830191015" />
-    <state width="1104" height="209" key="GridCell.Tab.0.center" timestamp="1624830191015">
+    <state width="1096" height="209" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1625118129173" />
+    <state width="1096" height="209" key="GridCell.Tab.0.center" timestamp="1625118129173">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1104" height="209" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1624830191015" />
-    <state width="1104" height="209" key="GridCell.Tab.0.left" timestamp="1624830191015">
+    <state width="1096" height="209" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1625118129173" />
+    <state width="1096" height="209" key="GridCell.Tab.0.left" timestamp="1625118129173">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1104" height="209" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1624830191015" />
-    <state width="1104" height="209" key="GridCell.Tab.0.right" timestamp="1624830191015">
+    <state width="1096" height="209" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1625118129173" />
+    <state width="1096" height="209" key="GridCell.Tab.0.right" timestamp="1625118129173">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1104" height="209" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1624830191015" />
+    <state width="1096" height="209" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1625118129173" />
+    <state x="0" y="64" key="MergeDialog" timestamp="1625062416265">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="0" y="64" key="MergeDialog/0.0.1536.824@0.0.1536.824" timestamp="1625062416265" />
+    <state x="225" y="173" key="MultipleFileMergeDialog" timestamp="1625062416269">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="225" y="173" key="MultipleFileMergeDialog/0.0.1536.824@0.0.1536.824" timestamp="1625062416269" />
     <state x="277" y="57" key="SettingsEditor" timestamp="1622623082698">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

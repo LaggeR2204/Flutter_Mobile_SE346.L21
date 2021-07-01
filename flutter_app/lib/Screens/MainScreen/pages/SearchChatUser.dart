@@ -81,7 +81,7 @@ class _SearchUserChatState extends State<SearchUserChat> {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              //return ProfilePage(userId: data['id']);
+                              // return ProfilePage(userId: data['id']);
                               return Chat(
                                   peerId: data['id'],
                                   peerAvatar: data['photoUrl'],

@@ -637,6 +637,7 @@ void postToFireStore(
 
   reference.add({
     "ownerId": currentUserModel.id,
+    "displayName": currentUserModel.displayName,
     "location": location,
     "likes": {},
     "mediaUrl": mediaUrl,
