@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/Chat.dart';
-import 'package:flutter_app/Screens/MainScreen/pages/ProfilePage.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/main.dart';
 

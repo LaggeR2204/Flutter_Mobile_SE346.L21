@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app/constants.dart';
 import "dart:async";
 import '../../../main.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -35,17 +36,18 @@ class _CommentPageState extends State<CommentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Comments",
-          style: TextStyle(color: Colors.white, fontSize: 20),
+        automaticallyImplyLeading: true,
+        brightness: Brightness.dark,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: <Color>[appPrimaryColor, appPrimaryColor2],
+            ),
+          ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        backgroundColor: Color(0xffff008e),
+        title: Text('Comments'),
       ),
       body: buildPage(),
     );
@@ -76,7 +78,6 @@ class _CommentPageState extends State<CommentPage> {
     );
   }
 
-
   Widget buildComments() {
     if (this.didFetchComments == false) {
       return FutureBuilder<List<Comment>>(
@@ -106,6 +107,7 @@ class _CommentPageState extends State<CommentPage> {
         .collection("comments")
         .doc(postId)
         .collection("comments_in_post")
+        .orderBy("timestamp")
         .get();
     data.docs.forEach((DocumentSnapshot doc) {
       comments.add(Comment.fromDocument(doc));
@@ -186,7 +188,7 @@ class Comment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-       /* ListTile(
+        /* ListTile(
           title: Text(comment),
           leading: CircleAvatar(
             backgroundImage: NetworkImage(avatarUrl),

@@ -42,6 +42,7 @@ class NotificationsPageState extends State<NotificationsPage> {
         .collection('feed')
         .doc(currentUserModel.id)
         .collection("items")
+        .orderBy("timestamp", descending: true)
         .get();
     print(currentUserModel.id);
     print(snap.docs);

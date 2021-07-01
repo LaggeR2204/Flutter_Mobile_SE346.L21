@@ -8,6 +8,7 @@ import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/AppUser.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/EditProfilePage.dart';
+import 'package:flutter_app/models/Post.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({this.userId});
@@ -265,55 +266,57 @@ class ProfilePageState extends State<ProfilePage>
       );
     }
 
-    // Container buildUserPosts() {
-    //   Future<List<Post>> getPosts() async {
-    //     List<Post> posts = [];
-    //     var snap = await FirebaseFirestore.instance
-    //         .collection('insta_posts')
-    //         .where('ownerId', isEqualTo: profileId)
-    //         .orderBy("timestamp")
-    //         .get();
-    //     for (var doc in snap.docs) {
-    //       posts.add(Post.fromDocument(doc));
-    //     }
-    //     setState(() {
-    //       postCount = snap.docs.length;
-    //     });
+    Container buildUserPosts() {
+      Future<List<ImagePost>> getPosts() async {
+        List<ImagePost> posts = [];
+        var snap = await FirebaseFirestore.instance
+            .collection('posts')
+            .where('ownerId', isEqualTo: profileId)
+            .orderBy("timestamp")
+            .get();
+        for (var doc in snap.docs) {
+          posts.add(ImagePost.fromDocument(doc));
+        }
+        setState(() {
+          postCount = snap.docs.length;
+        });
 
-    //     return posts.reversed.toList();
-    //   }
+        return posts.reversed.toList();
+      }
 
-    //   return Container(
-    //       child: FutureBuilder<List<Post>>(
-    //     future: getPosts(),
-    //     builder: (context, snapshot) {
-    //       if (!snapshot.hasData)
-    //         return Container(
-    //             alignment: FractionalOffset.center,
-    //             padding: const EdgeInsets.only(top: 10.0),
-    //             child: CircularProgressIndicator());
-    //       else if (view == "grid") {
-    //         build the grid
-    //         return GridView.count(
-    //             crossAxisCount: 3,
-    //             childAspectRatio: 1.0,
-    //                padding: const EdgeInsets.all(0.5),
-    //             mainAxisSpacing: 1.5,
-    //             crossAxisSpacing: 1.5,
-    //             shrinkWrap: true,
-    //             physics: const NeverScrollableScrollPhysics(),
-    //             children: snapshot.data.map((Post post) {
-    //               return GridTile(child: ImageTile(post));
-    //             }).toList());
-    //       } else if (view == "feed") {
-    //         return Column(
-    //             children: snapshot.data.map((Post post) {
-    //           return post;
-    //         }).toList());
-    //       }
-    //     },
-    //   ));
-    // }
+      return Container(
+          child: FutureBuilder<List<ImagePost>>(
+        future: getPosts(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Container(
+                alignment: FractionalOffset.center,
+                padding: const EdgeInsets.only(top: 10.0),
+                child: CircularProgressIndicator());
+          else if (view == "grid") {
+            //build the grid
+            return GridView.count(
+                crossAxisCount: 3,
+                childAspectRatio: 1.0,
+                padding: const EdgeInsets.all(0.5),
+                mainAxisSpacing: 1.5,
+                crossAxisSpacing: 1.5,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: snapshot.data.map((ImagePost post) {
+                  return GridTile(child: ImageTile(post));
+                }).toList());
+          } else if (view == "feed") {
+            return Column(
+                children: snapshot.data.map((ImagePost post) {
+              return post;
+            }).toList());
+          } else {
+            return Container();
+          }
+        },
+      ));
+    }
 
     return StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -449,10 +452,26 @@ class ProfilePageState extends State<ProfilePage>
                   Divider(),
                   buildImageViewButtonBar(),
                   Divider(height: 0.0),
-                  //buildUserPosts(),
+                  buildUserPosts(),
                 ],
               ));
         });
+  }
+}
+
+class ImageTile extends StatelessWidget {
+  final ImagePost imagePost;
+
+  ImageTile(this.imagePost);
+
+  clickedImage(BuildContext context) {
+    openImagePost(context, imagePost);
+  }
+
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () => clickedImage(context),
+        child: Image.network(imagePost.mediaUrl, fit: BoxFit.cover));
   }
 }
 

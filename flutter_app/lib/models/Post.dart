@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/CommentPage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../constants.dart';
 import '../main.dart';
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -127,7 +128,8 @@ class _ImagePost extends State<ImagePost> {
       this.postId,
       this.likeCount,
       this.ownerId,
-      this.displayName});
+      this.displayName
+      });
 
   GestureDetector buildLikeIcon() {
     Color color;
@@ -377,6 +379,36 @@ void goToComments(
       postId: postId,
       postOwner: ownerId,
       postMediaUrl: mediaUrl,
+    );
+  }));
+}
+
+void openImagePost(BuildContext context, ImagePost post) {
+  Navigator.of(context)
+      .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
+    return Center(
+      child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: true,
+            brightness: Brightness.dark,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: <Color>[appPrimaryColor, appPrimaryColor2],
+                ),
+              ),
+            ),
+            title: Text('${post.displayName}' + '\'s Post'),
+          ),
+          body: ListView(
+            children: <Widget>[
+              Container(
+                child: post,
+              ),
+            ],
+          )),
     );
   }));
 }
