@@ -37,7 +37,6 @@ class EditProfilePage_State extends State<EditProfilePage> {
   }
 
   _selectNewImage(BuildContext parentContext) async {
-    Size size = MediaQuery.of(context).size;
     return showModalBottomSheet(
         context: context,
         builder: (context) {

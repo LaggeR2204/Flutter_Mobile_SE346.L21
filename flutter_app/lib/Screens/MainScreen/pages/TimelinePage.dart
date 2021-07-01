@@ -16,7 +16,8 @@ class TimelinePage extends StatefulWidget {
   TimelinePageState createState() => TimelinePageState();
 }
 
-class TimelinePageState extends State<TimelinePage> {
+class TimelinePageState extends State<TimelinePage>
+    with AutomaticKeepAliveClientMixin<TimelinePage> {
   final double appBarHeight = AppBar().preferredSize.height;
   List<ImagePost> feedData = [];
   List<ImagePost> tempData = [];
@@ -29,6 +30,10 @@ class TimelinePageState extends State<TimelinePage> {
     this._getNewFeed();
     this.tempData = [];
   }
+
+  // ensures state is kept when switching pages
+  @override
+  bool get wantKeepAlive => true;
 
 /*
   Future _getImageFromCamera() async {
@@ -91,20 +96,18 @@ class TimelinePageState extends State<TimelinePage> {
   buildNewFeed() {
     if (feedData != null) {
       return StreamBuilder<List<ImagePost>>(
-        stream: _getfeed(currentUserModel.following.keys.toList()),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-                child: Text("Sorry! We have an error."));
-          } else if (snapshot.hasData){
+          stream: _getfeed(currentUserModel.following.keys.toList()),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text("Sorry! We have an error."));
+            } else if (snapshot.hasData) {
               final data = snapshot.data;
               feedData = data;
-          }
-          return ListView(
-            children: feedData,
-          );
-        }
-      );
+            }
+            return ListView(
+              children: feedData,
+            );
+          });
     } else {
       return Container(
           alignment: FractionalOffset.center,

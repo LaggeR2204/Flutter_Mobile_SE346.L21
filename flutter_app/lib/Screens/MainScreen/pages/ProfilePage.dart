@@ -322,7 +322,6 @@ class ProfilePageState extends State<ProfilePage>
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-
             return Container(
                 alignment: FractionalOffset.center,
                 child: CircularProgressIndicator());
@@ -471,13 +470,12 @@ Future<void> _signOut(BuildContext context) async {
 }
 
 openUserOption(BuildContext parentContext) {
-  Size size = MediaQuery.of(parentContext).size;
   return showModalBottomSheet(
       context: parentContext,
       builder: (context) {
         return Container(
           color: Color(0xFF737373),
-          height: 180,
+          height: 170,
           child: Container(
             decoration: BoxDecoration(
                 color: appPrimaryLightColor,

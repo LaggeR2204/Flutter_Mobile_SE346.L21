@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/Login/Login.dart';
+import 'package:flutter_app/Screens/Signup/SignUp.dart';
 import 'package:flutter_app/components/RoundedButton.dart';
 import 'package:flutter_app/components/RoundedPasswordFeild.dart';
 import 'package:flutter_app/components/RoundedTextField.dart';
 import 'package:flutter_app/components/TextFieldContainer.dart';
 import 'package:flutter_app/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final ref = FirebaseFirestore.instance.collection('users');
 
@@ -41,7 +43,6 @@ class Body extends StatelessWidget {
                     icon: Icons.email,
                     controller: emailController,
                     hintText: "Email",
-                    onChanged: (value) {},
                   ),
                 ),
                 TextFieldContainer(
@@ -49,65 +50,30 @@ class Body extends StatelessWidget {
                     icon: Icons.person,
                     controller: usernameController,
                     hintText: "Username",
-                    onChanged: (value) {},
                   ),
                 ),
                 TextFieldContainer(
                   child: RoundedPasswordField(
                     hintText: "Password",
                     controller: passwordController,
-                    onChanged: (value) {},
                   ),
                 ),
                 TextFieldContainer(
                   child: RoundedPasswordField(
                     hintText: "Repeat Password",
                     controller: repeatPasswordController,
-                    onChanged: (value) {},
                   ),
                 ),
                 RoundedButton(
                   text: "SIGN UP",
                   press: () {
                     if (isEmpty()) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => new AlertDialog(
-                          title: new Text("Error!!!"),
-                          content: new Text("Nhap het cac field dee"),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                "OK",
-                                style: TextStyle(color: appPrimaryColor),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        ),
-                      );
+                      Fluttertoast.showToast(msg: "Please enter all fields");
                     } else if (repeatPasswordController.value.text !=
                         passwordController.value.text) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => new AlertDialog(
-                          title: new Text("Error!!!"),
-                          content: new Text("Pass chua trung"),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                "OK",
-                                style: TextStyle(color: appPrimaryColor),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        ),
-                      );
+                      Fluttertoast.showToast(msg: "Passwords do not match");
+                      passwordController.clear();
+                      repeatPasswordController.clear();
                     } else {
                       signUp(context);
                     }
@@ -165,7 +131,6 @@ class Body extends StatelessWidget {
 
   void RegisterWithFirebase(BuildContext context, String _email,
       String _username, String _password) async {
-    print("[SIGNUP ACC] " + _email + " " + _password + " " + _username);
     try {
       final User user = (await _auth.createUserWithEmailAndPassword(
               email: _email, password: _password))
@@ -174,13 +139,6 @@ class Body extends StatelessWidget {
         user.sendEmailVerification();
       } catch (e) {}
 
-      //user.updateProfile(displayName: _username);
-      // .then((onValue) {
-      //   Firestore.instance.collection('users').doc(user.uid).set(
-      //     {'email': _email, 'displayName': _username}).then((onValue) {
-
-      //     });
-      // });
       addUserInfoToStorage(user);
 
       showDialog(
@@ -195,14 +153,19 @@ class Body extends StatelessWidget {
                 style: TextStyle(color: appPrimaryColor),
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                //Navigator.of(context).pop();
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return LoginScreen();
+                }));
               },
             )
           ],
         ),
       );
     } catch (error) {
-      if (error.code == "ERROR_INVALID_EMAIL") {
+      if (error.code == "invalid-email") {
         showDialog(
           context: context,
           builder: (_) => new AlertDialog(
@@ -225,7 +188,7 @@ class Body extends StatelessWidget {
         usernameController.clear();
         passwordController.clear();
         repeatPasswordController.clear();
-      } else if (error.code == "ERROR_EMAIL_ALREADY_IN_USE") {
+      } else if (error.code == "email-already-in-use") {
         showDialog(
           context: context,
           builder: (_) => new AlertDialog(
@@ -248,7 +211,7 @@ class Body extends StatelessWidget {
         usernameController.clear();
         passwordController.clear();
         repeatPasswordController.clear();
-      } else if (error.code == "ERROR_WEAK_PASSWORD") {
+      } else if (error.code == "weak_password") {
         showDialog(
           context: context,
           builder: (_) => new AlertDialog(
@@ -276,14 +239,6 @@ class Body extends StatelessWidget {
   }
 
   Future<void> addUserInfoToStorage(User user) async {
-    // User user = _auth.currentUser;
-    // if (user == null) {
-    //   return null;
-    // }
-    // DocumentSnapshot userRecord = await ref.doc(user.uid).get();
-    // if (userRecord.data() == null) {
-    // no user record exists, time to create
-
     String userName = usernameController.text;
 
     if (userName != null || userName.length != 0) {
@@ -299,10 +254,5 @@ class Body extends StatelessWidget {
         "chatWiths": {},
       });
     }
-    //userRecord = await ref.doc(user.uid).get();
-    //}
-
-    //currentUserModel = AppUser.fromDocument(userRecord);
-    //return null;
   }
 }

@@ -84,13 +84,12 @@ class Chat extends StatelessWidget {
   }
 
   openChatOption(BuildContext parentContext) {
-    Size size = MediaQuery.of(parentContext).size;
     return showModalBottomSheet(
         context: parentContext,
         builder: (context) {
           return Container(
             color: Color(0xFF737373),
-            height: 240,
+            height: 235,
             child: Container(
               decoration: BoxDecoration(
                   color: appPrimaryLightColor,
