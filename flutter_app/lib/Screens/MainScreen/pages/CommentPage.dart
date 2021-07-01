@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app/constants.dart';
 import "dart:async";
 import '../../../main.dart';
-
 
 class CommentPage extends StatefulWidget {
   final String postId;
@@ -33,11 +33,18 @@ class _CommentPageState extends State<CommentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Comments",
-          style: TextStyle(color: Colors.black),
+        automaticallyImplyLeading: true,
+        brightness: Brightness.dark,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: <Color>[appPrimaryColor, appPrimaryColor2],
+            ),
+          ),
         ),
-        backgroundColor: Colors.white,
+        title: Text('Comments'),
       ),
       body: buildPage(),
     );
@@ -47,8 +54,7 @@ class _CommentPageState extends State<CommentPage> {
     return Column(
       children: [
         Expanded(
-          child:
-          buildComments(),
+          child: buildComments(),
         ),
         Divider(),
         ListTile(
@@ -57,15 +63,20 @@ class _CommentPageState extends State<CommentPage> {
             decoration: InputDecoration(labelText: 'Write a comment...'),
             onFieldSubmitted: addComment,
           ),
-          trailing: OutlineButton(onPressed: (){addComment(_commentController.text);}, borderSide: BorderSide.none, child: Text("Post"),),
+          trailing: OutlineButton(
+            onPressed: () {
+              addComment(_commentController.text);
+            },
+            borderSide: BorderSide.none,
+            child: Text("Post"),
+          ),
         ),
       ],
     );
   }
 
-
   Widget buildComments() {
-    if (this.didFetchComments == false){
+    if (this.didFetchComments == false) {
       return FutureBuilder<List<Comment>>(
           future: getComments(),
           builder: (context, snapshot) {
@@ -82,9 +93,7 @@ class _CommentPageState extends State<CommentPage> {
           });
     } else {
       // for optimistic updating
-      return ListView(
-          children: this.fetchedComments
-      );
+      return ListView(children: this.fetchedComments);
     }
   }
 
@@ -132,12 +141,12 @@ class _CommentPageState extends State<CommentPage> {
 
     // add comment to the current listview for an optimistic update
     setState(() {
-      fetchedComments = List.from(fetchedComments)..add(Comment(
-          comment: comment,
-          timestamp: Timestamp.now(),
-          avatarUrl: currentUserModel.photoUrl,
-          userId: currentUserModel.id
-      ));
+      fetchedComments = List.from(fetchedComments)
+        ..add(Comment(
+            comment: comment,
+            timestamp: Timestamp.now(),
+            avatarUrl: currentUserModel.photoUrl,
+            userId: currentUserModel.id));
     });
   }
 }
@@ -151,10 +160,10 @@ class Comment extends StatelessWidget {
 
   Comment(
       {this.username,
-        this.userId,
-        this.avatarUrl,
-        this.comment,
-        this.timestamp});
+      this.userId,
+      this.avatarUrl,
+      this.comment,
+      this.timestamp});
 
   factory Comment.fromDocument(DocumentSnapshot document) {
     var data = document.data();
