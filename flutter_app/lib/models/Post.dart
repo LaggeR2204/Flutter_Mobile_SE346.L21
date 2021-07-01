@@ -15,18 +15,19 @@ class ImagePost extends StatefulWidget {
       this.likes,
       this.postId,
       this.ownerId,
-      this.displayName});
+      this.displayName,
+      this.timestamp});
 
   factory ImagePost.fromDocument(DocumentSnapshot document) {
     return ImagePost(
-      location: document['location'],
-      mediaUrl: document['mediaUrl'],
-      likes: document['likes'],
-      description: document['description'],
-      postId: document.id,
-      ownerId: document['ownerId'],
-      displayName: document['displayName'],
-    );
+        location: document['location'],
+        mediaUrl: document['mediaUrl'],
+        likes: document['likes'],
+        description: document['description'],
+        postId: document.id,
+        ownerId: document['ownerId'],
+        displayName: document['displayName'],
+        timestamp: document['timestamp']);
   }
 
   factory ImagePost.fromJSON(Map data) {
@@ -38,19 +39,21 @@ class ImagePost extends StatefulWidget {
       ownerId: data['ownerId'],
       postId: data['postId'],
       displayName: data['displayName'],
+      timestamp: data['timestamp'],
     );
   }
 
-  factory ImagePost.fromMap(Map<String, dynamic> data){
-      return ImagePost(
-        location: data['location'],
-        mediaUrl: data['mediaUrl'],
-        likes: data['likes'],
-        description: data['description'],
-        ownerId: data['ownerId'],
-        postId: data['postId'],
-        displayName: data['displayName'],
-      );
+  factory ImagePost.fromMap(Map<String, dynamic> data) {
+    return ImagePost(
+      location: data['location'],
+      mediaUrl: data['mediaUrl'],
+      likes: data['likes'],
+      description: data['description'],
+      ownerId: data['ownerId'],
+      postId: data['postId'],
+      displayName: data['displayName'],
+      timestamp: data['timestamp'],
+    );
   }
 
   int getLikeCount(var likes) {
@@ -70,6 +73,7 @@ class ImagePost extends StatefulWidget {
   }
 
   final String mediaUrl;
+  final Timestamp timestamp;
 
   //final String username;
   final String location;
@@ -87,12 +91,14 @@ class ImagePost extends StatefulWidget {
         likeCount: getLikeCount(this.likes),
         ownerId: this.ownerId,
         postId: this.postId,
+        timestamp: this.timestamp,
         displayName: this.displayName,
       );
 }
 
 class _ImagePost extends State<ImagePost> {
   final String mediaUrl;
+  final Timestamp timestamp;
 
   //final String username;
   final String location;
@@ -114,14 +120,14 @@ class _ImagePost extends State<ImagePost> {
 
   _ImagePost(
       {this.mediaUrl,
+      this.timestamp,
       this.location,
       this.description,
       this.likes,
       this.postId,
       this.likeCount,
       this.ownerId,
-      this.displayName
-      });
+      this.displayName});
 
   GestureDetector buildLikeIcon() {
     Color color;
@@ -193,7 +199,8 @@ class _ImagePost extends State<ImagePost> {
                 backgroundColor: Colors.grey,
               ),
               title: GestureDetector(
-                child: Text(snapshot.data.data()['displayName'], style: boldStyle),
+                child:
+                    Text(snapshot.data.data()['displayName'], style: boldStyle),
                 onTap: () {
                   //openProfile(context, ownerId);
                 },
