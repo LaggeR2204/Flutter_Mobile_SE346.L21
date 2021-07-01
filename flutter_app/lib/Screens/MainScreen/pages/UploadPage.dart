@@ -457,8 +457,8 @@ class _UploadPageState extends State<UploadPage> {
                   },
                 ),
                 title: const Text(
-                  "Post to",
-                  style: const TextStyle(color: Colors.black),
+                  "New Post",
+                  style: const TextStyle(color: Colors.white),
                 ),
                 actions: <Widget>[
                   FlatButton(
@@ -466,7 +466,7 @@ class _UploadPageState extends State<UploadPage> {
                     child: Text(
                       "Post",
                       style: TextStyle(
-                          color: Colors.blueAccent,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0),
                     ),

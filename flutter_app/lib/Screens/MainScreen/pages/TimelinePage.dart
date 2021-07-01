@@ -27,8 +27,6 @@ class TimelinePageState extends State<TimelinePage>
   @override
   void initState() {
     super.initState();
-    this._getNewFeed();
-    this.tempData = [];
   }
 
   // ensures state is kept when switching pages
@@ -58,6 +56,7 @@ class TimelinePageState extends State<TimelinePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         automaticallyImplyLeading: false,
         brightness: Brightness.dark,
         title: Text(
@@ -118,12 +117,12 @@ class TimelinePageState extends State<TimelinePage>
   }
 
   Future<Null> _refresh() async {
-    await _getNewFeed();
+    buildNewFeed();
     setState(() {});
     return;
   }
 
-  _getNewFeed() async {
+/*  _getNewFeed() async {
     var userFollowingSnap = await FirebaseFirestore.instance
         .collection('users')
         .doc(currentUserModel.id)
@@ -139,9 +138,9 @@ class TimelinePageState extends State<TimelinePage>
       //print("test " + key);
       followings_list.add(key.toString());
     });
-    /*for (String s in followings_list){
+    *//*for (String s in followings_list){
       print("following list " + s);
-    }*/
+    }*//*
     listPosts = _getAllPosts(followings_list);
 
     setState(() {
@@ -154,9 +153,9 @@ class TimelinePageState extends State<TimelinePage>
     List<ImagePost> userPosts = [];
 
     for (String s in followingsList) {
-      /* _getUserPosts(s).then((value){
+      *//* _getUserPosts(s).then((value){
         userPosts.addAll(value);
-      });*/
+      });*//*
       _getUserPosts(s);
       listPosts.addAll(userPosts);
     }
@@ -166,7 +165,7 @@ class TimelinePageState extends State<TimelinePage>
     return listPosts;
   }
 
-  /*Future<void> _getUserPosts(String uid) async {
+  *//*Future<void> _getUserPosts(String uid) async {
     List<ImagePost> listPosts = [];
     print(uid);
 
@@ -183,7 +182,7 @@ class TimelinePageState extends State<TimelinePage>
     }
     tempData.addAll(listPosts);
     return;
-  }*/
+  }*//*
   Future<void> _getUserPosts(String uid) async {
     List<ImagePost> listPosts = [];
     print(uid);
@@ -200,7 +199,7 @@ class TimelinePageState extends State<TimelinePage>
     }
     tempData.addAll(listPosts);
     return;
-  }
+  }*/
 
   Stream<List<ImagePost>> _getfeed(List<String> followingsList) {
     var snapshots = FirebaseFirestore.instance

@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/constants.dart';
 import "dart:async";
 import '../../../main.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentPage extends StatefulWidget {
   final String postId;
@@ -10,6 +12,7 @@ class CommentPage extends StatefulWidget {
   final String postMediaUrl;
 
   const CommentPage({this.postId, this.postOwner, this.postMediaUrl});
+
   @override
   _CommentPageState createState() => _CommentPageState(
       postId: this.postId,
@@ -104,6 +107,7 @@ class _CommentPageState extends State<CommentPage> {
         .collection("comments")
         .doc(postId)
         .collection("comments_in_post")
+        .orderBy("timestamp")
         .get();
     data.docs.forEach((DocumentSnapshot doc) {
       comments.add(Comment.fromDocument(doc));
@@ -121,7 +125,8 @@ class _CommentPageState extends State<CommentPage> {
       "comment": comment,
       "timestamp": Timestamp.now(),
       "avatarUrl": currentUserModel.photoUrl,
-      "userId": currentUserModel.id
+      "userId": currentUserModel.id,
+      "displayName": currentUserModel.displayName,
     });
 
     //adds to postOwner's activity feed
@@ -144,23 +149,25 @@ class _CommentPageState extends State<CommentPage> {
     setState(() {
       fetchedComments = List.from(fetchedComments)
         ..add(Comment(
-            comment: comment,
-            timestamp: Timestamp.now(),
-            avatarUrl: currentUserModel.photoUrl,
-            userId: currentUserModel.id));
+          comment: comment,
+          timestamp: Timestamp.now(),
+          avatarUrl: currentUserModel.photoUrl,
+          userId: currentUserModel.id,
+          displayName: currentUserModel.displayName,
+        ));
     });
   }
 }
 
 class Comment extends StatelessWidget {
-  final String username;
+  final String displayName;
   final String userId;
   final String avatarUrl;
   final String comment;
   final Timestamp timestamp;
 
   Comment(
-      {this.username,
+      {this.displayName,
       this.userId,
       this.avatarUrl,
       this.comment,
@@ -169,7 +176,7 @@ class Comment extends StatelessWidget {
   factory Comment.fromDocument(DocumentSnapshot document) {
     var data = document.data();
     return Comment(
-      username: data['username'],
+      displayName: data['displayName'],
       userId: data['userId'],
       comment: data["comment"],
       timestamp: data["timestamp"],
@@ -181,13 +188,80 @@ class Comment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        ListTile(
+        /* ListTile(
           title: Text(comment),
           leading: CircleAvatar(
             backgroundImage: NetworkImage(avatarUrl),
           ),
         ),
-        Divider(),
+        Divider()*/
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(left: 20, right: 10, top: 20),
+              width: 40,
+              height: 40,
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(avatarUrl),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 20, right: 5),
+                      child: Text(displayName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20, right: 5),
+                      child: Text(comment,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          )),
+                    )
+                  ],
+                ),
+/*                RichText(
+                    text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                        children: <TextSpan>[
+                      TextSpan(
+                          text: displayName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      TextSpan(text: ' '),
+                      TextSpan(
+                          text: comment,
+                          style: TextStyle(fontSize: 16, color: Colors.black))
+                    ])),*/
+                Container(
+                  margin: EdgeInsets.only(right: 10, top: 4),
+                  child: Text(
+                    timeago.format(timestamp.toDate()),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
