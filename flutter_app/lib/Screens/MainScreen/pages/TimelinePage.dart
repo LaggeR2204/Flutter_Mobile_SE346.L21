@@ -23,7 +23,7 @@ class TimelinePageState extends State<TimelinePage>
   List<ImagePost> tempData = [];
   List<AppUser> followingUser;
   final imagePicker = ImagePicker();
-
+  List<String> followings = [];
   @override
   void initState() {
     super.initState();
@@ -94,9 +94,11 @@ class TimelinePageState extends State<TimelinePage>
   }
 
   buildNewFeed() {
+    followings = currentUserModel.following.keys.toList();
+    followings.add(currentUserModel.id);
     if (feedData != null) {
       return StreamBuilder<List<ImagePost>>(
-          stream: _getfeed(currentUserModel.following.keys.toList()),
+          stream: _getfeed(followings),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text("Sorry! We have an error."));
@@ -204,6 +206,7 @@ class TimelinePageState extends State<TimelinePage>
     var snapshots = FirebaseFirestore.instance
         .collection('posts')
         .where('ownerId', whereIn: followingsList)
+        .orderBy('timestamp')
         .snapshots();
     return snapshots.map((snapshot) => snapshot.docs
         .map(

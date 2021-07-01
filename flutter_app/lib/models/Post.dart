@@ -14,7 +14,8 @@ class ImagePost extends StatefulWidget {
       this.description,
       this.likes,
       this.postId,
-      this.ownerId});
+      this.ownerId,
+      this.displayName});
 
   factory ImagePost.fromDocument(DocumentSnapshot document) {
     return ImagePost(
@@ -24,6 +25,7 @@ class ImagePost extends StatefulWidget {
       description: document['description'],
       postId: document.id,
       ownerId: document['ownerId'],
+      displayName: document['displayName'],
     );
   }
 
@@ -35,6 +37,7 @@ class ImagePost extends StatefulWidget {
       description: data['description'],
       ownerId: data['ownerId'],
       postId: data['postId'],
+      displayName: data['displayName'],
     );
   }
 
@@ -46,6 +49,7 @@ class ImagePost extends StatefulWidget {
         description: data['description'],
         ownerId: data['ownerId'],
         postId: data['postId'],
+        displayName: data['displayName'],
       );
   }
 
@@ -73,6 +77,7 @@ class ImagePost extends StatefulWidget {
   final likes;
   final String postId;
   final String ownerId;
+  final String displayName;
 
   _ImagePost createState() => _ImagePost(
         mediaUrl: this.mediaUrl,
@@ -82,6 +87,7 @@ class ImagePost extends StatefulWidget {
         likeCount: getLikeCount(this.likes),
         ownerId: this.ownerId,
         postId: this.postId,
+        displayName: this.displayName,
       );
 }
 
@@ -96,7 +102,7 @@ class _ImagePost extends State<ImagePost> {
   final String postId;
   bool liked;
   final String ownerId;
-
+  final String displayName;
   bool showHeart = false;
 
   TextStyle boldStyle = TextStyle(
@@ -113,7 +119,9 @@ class _ImagePost extends State<ImagePost> {
       this.likes,
       this.postId,
       this.likeCount,
-      this.ownerId});
+      this.ownerId,
+      this.displayName
+      });
 
   GestureDetector buildLikeIcon() {
     Color color;
@@ -185,7 +193,7 @@ class _ImagePost extends State<ImagePost> {
                 backgroundColor: Colors.grey,
               ),
               title: GestureDetector(
-                child: Text(snapshot.data.data()['id'], style: boldStyle),
+                child: Text(snapshot.data.data()['displayName'], style: boldStyle),
                 onTap: () {
                   //openProfile(context, ownerId);
                 },
@@ -251,7 +259,7 @@ class _ImagePost extends State<ImagePost> {
             Container(
                 margin: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  "$ownerId ",
+                  "$displayName ",
                   style: boldStyle,
                 )),
             Expanded(child: Text(description)),
