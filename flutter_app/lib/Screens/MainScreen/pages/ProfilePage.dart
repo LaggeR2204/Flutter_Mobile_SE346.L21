@@ -465,33 +465,7 @@ class ImageTile extends StatelessWidget {
   ImageTile(this.imagePost);
 
   clickedImage(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
-      return Center(
-        child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: true,
-              brightness: Brightness.dark,
-              flexibleSpace: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: <Color>[appPrimaryColor, appPrimaryColor2],
-                  ),
-                ),
-              ),
-              title: Text('Photo'),
-            ),
-            body: ListView(
-              children: <Widget>[
-                Container(
-                  child: imagePost,
-                ),
-              ],
-            )),
-      );
-    }));
+    openImagePost(context, imagePost);
   }
 
   Widget build(BuildContext context) {

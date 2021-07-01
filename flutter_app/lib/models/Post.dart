@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/CommentPage.dart';
+import 'package:flutter_app/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../main.dart';
 import 'dart:async';
@@ -41,16 +42,16 @@ class ImagePost extends StatefulWidget {
     );
   }
 
-  factory ImagePost.fromMap(Map<String, dynamic> data){
-      return ImagePost(
-        location: data['location'],
-        mediaUrl: data['mediaUrl'],
-        likes: data['likes'],
-        description: data['description'],
-        ownerId: data['ownerId'],
-        postId: data['postId'],
-        displayName: data['displayName'],
-      );
+  factory ImagePost.fromMap(Map<String, dynamic> data) {
+    return ImagePost(
+      location: data['location'],
+      mediaUrl: data['mediaUrl'],
+      likes: data['likes'],
+      description: data['description'],
+      ownerId: data['ownerId'],
+      postId: data['postId'],
+      displayName: data['displayName'],
+    );
   }
 
   int getLikeCount(var likes) {
@@ -120,8 +121,7 @@ class _ImagePost extends State<ImagePost> {
       this.postId,
       this.likeCount,
       this.ownerId,
-      this.displayName
-      });
+      this.displayName});
 
   GestureDetector buildLikeIcon() {
     Color color;
@@ -193,7 +193,8 @@ class _ImagePost extends State<ImagePost> {
                 backgroundColor: Colors.grey,
               ),
               title: GestureDetector(
-                child: Text(snapshot.data.data()['displayName'], style: boldStyle),
+                child:
+                    Text(snapshot.data.data()['displayName'], style: boldStyle),
                 onTap: () {
                   //openProfile(context, ownerId);
                 },
@@ -370,6 +371,36 @@ void goToComments(
       postId: postId,
       postOwner: ownerId,
       postMediaUrl: mediaUrl,
+    );
+  }));
+}
+
+void openImagePost(BuildContext context, ImagePost post) {
+  Navigator.of(context)
+      .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
+    return Center(
+      child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: true,
+            brightness: Brightness.dark,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: <Color>[appPrimaryColor, appPrimaryColor2],
+                ),
+              ),
+            ),
+            title: Text('${post.displayName}' + '\'s Post'),
+          ),
+          body: ListView(
+            children: <Widget>[
+              Container(
+                child: post,
+              ),
+            ],
+          )),
     );
   }));
 }

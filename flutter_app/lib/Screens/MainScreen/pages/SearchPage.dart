@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -154,76 +155,82 @@ class SearchPageState extends State<SearchPage>
                         itemBuilder: (context, index) {
                           DocumentSnapshot doc = snapshot.data.docs[index];
                           var data = doc.data();
-                          return FlatButton(
+                          return Padding(
+                            padding: EdgeInsets.only(top: 2.0),
+                            child: FlatButton(
                               onPressed: () {
-                                // ImagePost temp = ImagePost.fromDocument(doc);
-                                // Navigator.of(context).push(
-                                //     MaterialPageRoute<bool>(
-                                //         builder: (BuildContext context) {
-                                //   return Center(
-                                //     child: Scaffold(
-                                //         appBar: AppBar(
-                                //           automaticallyImplyLeading: true,
-                                //           brightness: Brightness.dark,
-                                //           flexibleSpace: Container(
-                                //             decoration: BoxDecoration(
-                                //               gradient: LinearGradient(
-                                //                 begin: Alignment.centerLeft,
-                                //                 end: Alignment.centerRight,
-                                //                 colors: <Color>[
-                                //                   appPrimaryColor,
-                                //                   appPrimaryColor2
-                                //                 ],
-                                //               ),
-                                //             ),
-                                //           ),
-                                //           title: Text('Photo'),
-                                //         ),
-                                //         body: ListView(
-                                //           children: <Widget>[
-                                //             Container(
-                                //               child: temp,
-                                //             ),
-                                //           ],
-                                //         )),
-                                //   );
-                                // }));
+                                ImagePost tempPost =
+                                    ImagePost.fromDocument(doc);
+                                openImagePost(context, tempPost);
                               },
-                              child: Column(children: <Widget>[
-                                SizedBox(
-                                  height: size.height * 0.01,
+                              child: ListTile(
+                                title: Text(
+                                  data['displayName'],
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                Row(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: (data['mediaUrl'] != "") ? 25 : 20,
+                                trailing: Container(
+                                  height: 50.0,
+                                  width: 50.0,
+                                  child: AspectRatio(
+                                    aspectRatio: 16 / 9,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: CachedNetworkImageProvider(
+                                            data['mediaUrl']),
+                                      )),
                                     ),
-                                    (data['mediaUrl'] != "")
-                                        ? CircleAvatar(
-                                            radius: size.width * 0.06,
-                                            backgroundImage:
-                                                NetworkImage(data['mediaUrl']),
-                                          )
-                                        : Image.asset(
-                                            "assets/images/defaultProfileImage.png",
-                                            width: size.width * 0.14,
-                                            height: size.width * 0.14,
-                                            fit: BoxFit.fitHeight),
-                                    SizedBox(
-                                      width: (data['mediaUrl'] != "") ? 25 : 20,
-                                    ),
-                                    // Text(
-                                    //   data['ownerId'],
-                                    //   style: TextStyle(
-                                    //       fontSize: 20,
-                                    //       fontWeight: FontWeight.normal),
-                                    // ),
-                                  ],
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: size.height * 0.01,
+                                subtitle: Text(
+                                  data['description'],
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ]));
+                              ),
+                            ),
+                          );
+                          // return FlatButton(
+                          //     onPressed: () {
+                          //       ImagePost tempPost =
+                          //           ImagePost.fromDocument(doc);
+                          //       openImagePost(context, tempPost);
+                          //     },
+                          //     child: Column(children: <Widget>[
+                          //       SizedBox(
+                          //         height: size.height * 0.01,
+                          //       ),
+                          //       Row(
+                          //         children: <Widget>[
+                          //           SizedBox(
+                          //             width: (data['mediaUrl'] != "") ? 25 : 20,
+                          //           ),
+                          //           (data['mediaUrl'] != "")
+                          //               ? CircleAvatar(
+                          //                   radius: size.width * 0.06,
+                          //                   backgroundImage:
+                          //                       NetworkImage(data['mediaUrl']),
+                          //                 )
+                          //               : Image.asset(
+                          //                   "assets/images/defaultProfileImage.png",
+                          //                   width: size.width * 0.14,
+                          //                   height: size.width * 0.14,
+                          //                   fit: BoxFit.fitHeight),
+                          //           SizedBox(
+                          //             width: (data['mediaUrl'] != "") ? 25 : 20,
+                          //           ),
+                          //           Text(
+                          //             data['displayName'],
+                          //             style: TextStyle(
+                          //                 fontSize: 20,
+                          //                 fontWeight: FontWeight.normal),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //       SizedBox(
+                          //         height: size.height * 0.01,
+                          //       ),
+                          //     ]));
                         },
                       );
           },
@@ -285,92 +292,6 @@ class SearchPageState extends State<SearchPage>
         ),
       ),
       body: buildSearchResult(),
-      // body: TabBarView(
-      //   controller: _tabController,
-      //   children: [
-      //     Center(
-      //       child: Text("search recent"),
-      //     ),
-
-      //     Center(
-      //       child: Text("search places"),
-      //     ),
-      //   ],
-      // ),
     );
-  }
-
-  Widget buildSearchAccountsPage(BuildContext context, String searchTerm) {
-    final Size size = MediaQuery.of(context).size;
-    if (searchTerm != "" && searchTerm != null) {
-      return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("users")
-            //.where("id", isNotEqualTo: currentUserModel.id)
-            .where("displayName", isGreaterThanOrEqualTo: searchTerm)
-            .snapshots(),
-        builder: (context, snapshot) {
-          return (snapshot.connectionState == ConnectionState.waiting)
-              ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot doc = snapshot.data.docs[index];
-                    var data = doc.data();
-                    return FlatButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return ProfilePage(userId: data['id']);
-                          }));
-                        },
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        //   return Chat(
-                        //       peerId: data['id'],
-                        //       peerAvatar: data['photoUrl'],
-                        //       peerName: data['displaynName']); //Mở tin nhắn của user này
-                        // })),
-                        child: Column(children: <Widget>[
-                          SizedBox(
-                            height: size.height * 0.01,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              SizedBox(
-                                width: (data['photoUrl'] != "") ? 25 : 20,
-                              ),
-                              (data['photoUrl'] != "")
-                                  ? CircleAvatar(
-                                      radius: size.width * 0.06,
-                                      backgroundImage:
-                                          NetworkImage(data['photoUrl']),
-                                    )
-                                  : Image.asset(
-                                      "assets/images/defaultProfileImage.png",
-                                      width: size.width * 0.14,
-                                      height: size.width * 0.14,
-                                      fit: BoxFit.fitHeight),
-                              SizedBox(
-                                width: (data['photoUrl'] != "") ? 25 : 20,
-                              ),
-                              Text(
-                                data['displayName'],
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.height * 0.01,
-                          ),
-                        ]));
-                  },
-                );
-        },
-      );
-    } else {
-      return Container();
-    }
   }
 }
