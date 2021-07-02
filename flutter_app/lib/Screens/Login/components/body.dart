@@ -55,7 +55,22 @@ class Body extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    //
+                    if (emailController.value.text == "") {
+                      Fluttertoast.showToast(
+                          msg: "Please enter your email address");
+                    } else {
+                      if (RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(emailController.value.text)) {
+                        FirebaseAuth.instance
+                            .sendPasswordResetEmail(
+                                email: emailController.value.text)
+                            .whenComplete(() => Fluttertoast.showToast(
+                                msg: "Password reset email sent"));
+                      } else {
+                        Fluttertoast.showToast(msg: "Email is invalid");
+                      }
+                    }
                   },
                   child: Text(
                     "Forgot Password?",
