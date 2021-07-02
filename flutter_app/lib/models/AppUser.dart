@@ -10,18 +10,33 @@ class AppUser {
   final Map following;
   final Map chatWiths;
   final List<String> searchRecent;
+  final String chattingWith;
 
-  const AppUser({
-    this.id,
-    this.photoUrl,
-    this.email,
-    this.displayName,
-    this.bio,
-    this.followers,
-    this.following,
-    this.chatWiths,
-    this.searchRecent,
-  });
+  const AppUser(
+      {this.id,
+      this.photoUrl,
+      this.email,
+      this.displayName,
+      this.bio,
+      this.followers,
+      this.following,
+      this.chatWiths,
+      this.searchRecent,
+      this.chattingWith});
+
+  factory AppUser.changeChattingWith(AppUser currentUser, String chattingWith) {
+    return AppUser(
+        email: currentUser.email,
+        photoUrl: currentUser.photoUrl,
+        id: currentUser.id,
+        displayName: currentUser.displayName,
+        bio: currentUser.bio,
+        followers: currentUser.followers,
+        following: currentUser.following,
+        chatWiths: currentUser.chatWiths,
+        chattingWith: chattingWith,
+        searchRecent: currentUser.searchRecent);
+  }
 
   factory AppUser.fromDocument(DocumentSnapshot document) {
     return AppUser(
@@ -33,6 +48,7 @@ class AppUser {
         followers: document['followers'],
         following: document['following'],
         chatWiths: document['chatWiths'],
+        chattingWith: document['chattingWith'],
         searchRecent: List.from(document['searchRecent']));
   }
   factory AppUser.fromMap(Map<String, dynamic> data) {
@@ -45,6 +61,7 @@ class AppUser {
         followers: data['followers'],
         following: data['following'],
         chatWiths: data['chatWiths'],
+        chattingWith: data['chattingWith'],
         searchRecent: List.from(data['searchRecent']));
   }
 }

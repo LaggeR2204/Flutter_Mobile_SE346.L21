@@ -1,12 +1,15 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/Chat.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/SearchChatUser.dart';
 import 'package:flutter_app/components/Loading.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/main.dart';
+import 'package:flutter_app/models/AppUser.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class MessengerPage extends StatefulWidget {
   @override
@@ -19,6 +22,61 @@ class MessengerPageState extends State<MessengerPage>
   void initState() {
     listScrollController.addListener(scrollListener);
     super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher',
+              ),
+            ));
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: Text(notification.title),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [Text(notification.body)],
+                  ),
+                ),
+              );
+            });
+      }
+    });
+  }
+
+  void showNotification() {
+    flutterLocalNotificationsPlugin.show(
+        0,
+        "LevArt Message",
+        "You have a new message",
+        NotificationDetails(
+            android: AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.high,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher')));
   }
 
   @override
@@ -101,6 +159,17 @@ class MessengerPageState extends State<MessengerPage>
                                         currentUserModel.id)
                                     ? ""
                                     : "You: ";
+
+                            if (DateTime.now().millisecondsSinceEpoch <=
+                                    (int.parse(snapshot.data.docs[0]
+                                            .data()['timestamp']) +
+                                        5000) &&
+                                snapshot.data.docs[0].data()['idFrom'] !=
+                                    currentUserModel.id &&
+                                currentUserModel.chattingWith != peerId) {
+                              showNotification();
+                            }
+
                             return Container(
                               child: Text(
                                 '${fromUser}${snapshot.data.docs[0].data()['content']}',
@@ -121,6 +190,12 @@ class MessengerPageState extends State<MessengerPage>
           ],
         ),
         onPressed: () {
+          currentUserModel =
+              AppUser.changeChattingWith(currentUserModel, peerId);
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(id)
+              .update({'chattingWith': peerId});
           Navigator.push(
               context,
               MaterialPageRoute(

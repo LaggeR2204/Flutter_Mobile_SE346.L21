@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/ProfilePage.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_app/components/Loading.dart';
 import 'package:flutter_app/components/RoundedButton.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/main.dart';
+import 'package:flutter_app/models/AppUser.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -312,6 +314,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
         );
       });
+
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
@@ -320,6 +323,8 @@ class _ChatScreenState extends State<ChatScreen> {
           backgroundColor: appPrimaryColor2,
           textColor: Colors.white);
     }
+
+    //FirebaseMessaging.instance.getToken().then((value) => print(value));
   }
 
   bool isLastMessageLeft(int index) {
@@ -844,10 +849,11 @@ class _ChatScreenState extends State<ChatScreen> {
         isShowSticker = false;
       });
     } else {
-      // FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(id)
-      //     .update({'chattingWith': null});
+      currentUserModel = AppUser.changeChattingWith(currentUserModel, null);
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(id)
+          .update({'chattingWith': null});
       Navigator.pop(context);
     }
 
