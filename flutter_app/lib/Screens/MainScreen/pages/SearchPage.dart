@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app/Screens/MainScreen/pages/ProfilePage.dart';
 import 'package:flutter_app/constants.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/Post.dart';
 
 class SearchPage extends StatefulWidget {
@@ -89,9 +90,47 @@ class SearchPageState extends State<SearchPage>
                           var data = doc.data();
                           return FlatButton(
                               onPressed: () {
+                                String tempProfileId = data['id'];
+                                if (currentUserModel.searchRecent.length == 0) {
+                                  currentUserModel.searchRecent
+                                      .add(tempProfileId);
+                                  FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(currentUserModel.id)
+                                      .update({
+                                    'searchRecent':
+                                        currentUserModel.searchRecent
+                                  });
+                                } else if (!currentUserModel.searchRecent
+                                    .contains(tempProfileId)) {
+                                  currentUserModel.searchRecent
+                                      .insert(0, tempProfileId);
+                                  FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(currentUserModel.id)
+                                      .update({
+                                    'searchRecent':
+                                        currentUserModel.searchRecent
+                                  });
+                                } else if (currentUserModel.searchRecent
+                                    .contains(tempProfileId)) {
+                                  currentUserModel.searchRecent
+                                      .remove(tempProfileId);
+                                  currentUserModel.searchRecent
+                                      .insert(0, tempProfileId);
+                                  FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(currentUserModel.id)
+                                      .update({
+                                    'searchRecent':
+                                        currentUserModel.searchRecent
+                                  });
+                                }
+
+                                print("[ID] " + tempProfileId);
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return ProfilePage(userId: data['id']);
+                                  return ProfilePage(userId: tempProfileId);
                                 }));
                               },
                               child: Column(children: <Widget>[
@@ -190,52 +229,113 @@ class SearchPageState extends State<SearchPage>
                               ),
                             ),
                           );
-                          // return FlatButton(
-                          //     onPressed: () {
-                          //       ImagePost tempPost =
-                          //           ImagePost.fromDocument(doc);
-                          //       openImagePost(context, tempPost);
-                          //     },
-                          //     child: Column(children: <Widget>[
-                          //       SizedBox(
-                          //         height: size.height * 0.01,
-                          //       ),
-                          //       Row(
-                          //         children: <Widget>[
-                          //           SizedBox(
-                          //             width: (data['mediaUrl'] != "") ? 25 : 20,
-                          //           ),
-                          //           (data['mediaUrl'] != "")
-                          //               ? CircleAvatar(
-                          //                   radius: size.width * 0.06,
-                          //                   backgroundImage:
-                          //                       NetworkImage(data['mediaUrl']),
-                          //                 )
-                          //               : Image.asset(
-                          //                   "assets/images/defaultProfileImage.png",
-                          //                   width: size.width * 0.14,
-                          //                   height: size.width * 0.14,
-                          //                   fit: BoxFit.fitHeight),
-                          //           SizedBox(
-                          //             width: (data['mediaUrl'] != "") ? 25 : 20,
-                          //           ),
-                          //           Text(
-                          //             data['displayName'],
-                          //             style: TextStyle(
-                          //                 fontSize: 20,
-                          //                 fontWeight: FontWeight.normal),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       SizedBox(
-                          //         height: size.height * 0.01,
-                          //       ),
-                          //     ]));
                         },
                       );
           },
         ),
       );
+    } else {
+      //search recent
+      if (currentUserModel.searchRecent != null &&
+          currentUserModel.searchRecent.length != 0) {
+        return Container(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("users")
+                .where("id", whereIn: currentUserModel.searchRecent)
+                .limit(10)
+                .snapshots(),
+            builder: (context, snapshot) {
+              return (!snapshot.hasData)
+                  ? Center(
+                      child: Text("Search someone"),
+                    )
+                  : (snapshot.connectionState == ConnectionState.waiting)
+                      ? Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                          itemCount: snapshot.data.docs.length,
+                          itemBuilder: (context, index) {
+                            DocumentSnapshot doc;
+                            for (var _doc in snapshot.data.docs) {
+                              if (_doc.data()['id'] ==
+                                  currentUserModel.searchRecent[index]) {
+                                doc = _doc;
+                                break;
+                              }
+                            }
+                            var data = doc.data();
+                            return FlatButton(
+                                onPressed: () {
+                                  final String tempProfileId = data['id'];
+                                  if (index != 0) {
+                                    currentUserModel.searchRecent
+                                        .remove(tempProfileId);
+                                    currentUserModel.searchRecent
+                                        .insert(0, tempProfileId);
+                                    FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(currentUserModel.id)
+                                        .update({
+                                      'searchRecent':
+                                          currentUserModel.searchRecent
+                                    });
+                                  }
+
+                                  print("[ID] " + tempProfileId);
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return ProfilePage(userId: tempProfileId);
+                                  }));
+                                },
+                                child: Column(children: <Widget>[
+                                  SizedBox(
+                                    height: size.height * 0.01,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width:
+                                            (data['photoUrl'] != "") ? 25 : 20,
+                                      ),
+                                      (data['photoUrl'] != "")
+                                          ? CircleAvatar(
+                                              radius: size.width * 0.06,
+                                              backgroundImage: NetworkImage(
+                                                  data['photoUrl']),
+                                            )
+                                          : Image.asset(
+                                              "assets/images/defaultProfileImage.png",
+                                              width: size.width * 0.14,
+                                              height: size.width * 0.14,
+                                              fit: BoxFit.fitHeight),
+                                      SizedBox(
+                                        width:
+                                            (data['photoUrl'] != "") ? 25 : 20,
+                                      ),
+                                      Text(
+                                        data['displayName'],
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 0.01,
+                                  ),
+                                ]));
+                          },
+                        );
+            },
+          ),
+        );
+      } else {
+        return Container(
+          child: Center(
+            child: Text("Search someone"),
+          ),
+        );
+      }
     }
   }
 

@@ -252,6 +252,7 @@ class Body extends StatelessWidget {
         "followers": {},
         "following": {},
         "chatWiths": {},
+        "searchRecent": []
       });
     }
   }
