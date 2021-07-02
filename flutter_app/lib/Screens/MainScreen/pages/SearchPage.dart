@@ -39,6 +39,9 @@ class SearchPageState extends State<SearchPage>
 
   SearchControllerListener() {
     print('[LISTENER]');
+    if (_searchTermController.value.text != "" && _tabController.index == 0) {
+      _tabController.animateTo(1);
+    }
     setState(() {
       searchTerm = _searchTermController.value.text;
     });
@@ -46,7 +49,10 @@ class SearchPageState extends State<SearchPage>
 
   TabControllerListener() {
     if (_tabController.indexIsChanging) {
-      _searchTermController.clear();
+      if (_tabController.index == 1 && _tabController.previousIndex == 0) {
+      } else {
+        _searchTermController.clear();
+      }
     }
 
     if (_tabController.index == 0) {
