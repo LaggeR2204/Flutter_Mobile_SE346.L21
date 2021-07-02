@@ -241,8 +241,11 @@ class Body extends StatelessWidget {
   Future<void> addUserInfoToStorage(User user) async {
     String userName = usernameController.text;
 
+    var unverifiedUsers =
+        FirebaseFirestore.instance.collection('unverifiedUsers');
+
     if (userName != null || userName.length != 0) {
-      ref.doc(user.uid).set({
+      unverifiedUsers.doc(user.uid).set({
         "id": user.uid,
         "photoUrl":
             "", //FirebaseStorage.instance.ref().child("defaultProfileImage.png"),

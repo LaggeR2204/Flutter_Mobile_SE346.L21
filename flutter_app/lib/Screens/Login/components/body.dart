@@ -276,12 +276,34 @@ class Body extends StatelessWidget {
     if (user == null) {
       return null;
     }
+
+    DocumentSnapshot ds = await FirebaseFirestore.instance
+        .collection('unverifiedUsers')
+        .doc(user.uid)
+        .get();
+
+    if (ds.exists) {
+      await FirebaseFirestore.instance
+          .collection('unverifiedUsers')
+          .doc(user.uid)
+          .get()
+          .then((value) => FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set(value.data()));
+    }
+
     DocumentSnapshot userRecord = await ref.doc(user.uid).get();
     if (userRecord.data() != null) {
       userRecord = await ref.doc(user.uid).get();
     }
 
     currentUserModel = AppUser.fromDocument(userRecord);
+
+    FirebaseFirestore.instance
+        .collection('unverifiedUsers')
+        .doc(user.uid)
+        .delete();
     //print("current user model " + currentUserModel.id + currentUserModel.displayName);
   }
 }
