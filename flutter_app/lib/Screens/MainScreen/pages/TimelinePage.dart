@@ -103,7 +103,10 @@ class TimelinePageState extends State<TimelinePage>
               return Center(child: Text("Sorry! We have an error."));
             } else if (snapshot.hasData) {
               final data = snapshot.data;
+
               feedData = data;
+              feedData.sort((a,b) => b.timestamp.compareTo(a.timestamp));
+              //feedData.sort((a,b) => a.timestamp - b.timestamp);
             }
             return ListView(
               children: feedData,
@@ -205,7 +208,7 @@ class TimelinePageState extends State<TimelinePage>
     var snapshots = FirebaseFirestore.instance
         .collection('posts')
         .where('ownerId', whereIn: followingsList)
-        .orderBy('timestamp')
+
         .snapshots();
     return snapshots.map((snapshot) => snapshot.docs
         .map(
