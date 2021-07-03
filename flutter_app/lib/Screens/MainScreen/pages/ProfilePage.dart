@@ -11,7 +11,7 @@ import 'package:flutter_app/Screens/MainScreen/pages/EditProfilePage.dart';
 import 'package:flutter_app/models/Post.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({this.userId});
+  const ProfilePage({@required this.userId});
 
   final String userId;
 
@@ -324,137 +324,143 @@ class ProfilePageState extends State<ProfilePage>
             .doc(profileId)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (!snapshot.hasData || !snapshot.data.exists) {
             return Container(
                 alignment: FractionalOffset.center,
                 child: CircularProgressIndicator());
+          } else {
+            AppUser user = AppUser.fromDocument(snapshot.data);
 
-          //print("[SNAPSHOT DATA ] "+ snapshot.data['displayName'].toString());
-          AppUser user = AppUser.fromDocument(snapshot.data);
+            if (user.followers.containsKey(currentUserId) &&
+                user.followers[currentUserId] &&
+                followButtonClicked == false) {
+              isFollowing = true;
+            }
 
-          if (user.followers.containsKey(currentUserId) &&
-              user.followers[currentUserId] &&
-              followButtonClicked == false) {
-            isFollowing = true;
-          }
-
-          return Scaffold(
-              appBar: (currentUserModel.id == this.profileId)
-                  ? AppBar(
-                      brightness: Brightness.dark,
-                      automaticallyImplyLeading: false,
-                      flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: <Color>[appPrimaryColor, appPrimaryColor2],
+            return Scaffold(
+                appBar: (currentUserModel.id == this.profileId)
+                    ? AppBar(
+                        brightness: Brightness.dark,
+                        automaticallyImplyLeading: false,
+                        flexibleSpace: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: <Color>[
+                                appPrimaryColor,
+                                appPrimaryColor2
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      title: Container(
-                        child: Text(user.displayName),
-                      ),
-                      actions: [
-                        IconButton(
-                            icon: Icon(Icons.settings),
-                            onPressed: () {
-                              openUserOption(context);
-                            })
-                      ],
-                    )
-                  : AppBar(
-                      brightness: Brightness.dark,
-                      automaticallyImplyLeading: true,
-                      flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: <Color>[appPrimaryColor, appPrimaryColor2],
+                        title: Container(
+                          child: Text(user.displayName),
+                        ),
+                        actions: [
+                          IconButton(
+                              icon: Icon(Icons.settings),
+                              onPressed: () {
+                                openUserOption(context);
+                              })
+                        ],
+                      )
+                    : AppBar(
+                        brightness: Brightness.dark,
+                        automaticallyImplyLeading: true,
+                        flexibleSpace: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: <Color>[
+                                appPrimaryColor,
+                                appPrimaryColor2
+                              ],
+                            ),
                           ),
                         ),
+                        title: Container(
+                          child: Text(user.displayName),
+                        ),
+                        actions: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return Chat(
+                                      peerId: profileId,
+                                      peerAvatar: user.photoUrl,
+                                      peerName: user.displayName);
+                                }));
+                              },
+                              icon: Icon(Icons.message))
+                        ],
                       ),
-                      title: Container(
-                        child: Text(user.displayName),
-                      ),
-                      actions: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return Chat(
-                                    peerId: profileId,
-                                    peerAvatar: user.photoUrl,
-                                    peerName: user.displayName);
-                              }));
-                            },
-                            icon: Icon(Icons.message))
-                      ],
-                    ),
-              body: ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            (user.photoUrl != "")
-                                ? CircleAvatar(
-                                    radius: size.width * 0.11,
-                                    backgroundColor: Colors.grey,
-                                    backgroundImage:
-                                        NetworkImage(user.photoUrl),
-                                  )
-                                : Image.asset(
-                                    "assets/images/defaultProfileImage.png",
-                                    width: size.width * 0.23,
-                                    height: size.width * 0.23,
-                                    fit: BoxFit.fitHeight),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      buildStatColumn("posts", postCount),
-                                      buildStatColumn("followers",
-                                          _countFollowings(user.followers)),
-                                      buildStatColumn("following",
-                                          _countFollowings(user.following)),
-                                    ],
-                                  ),
-                                  Row(
+                body: ListView(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              (user.photoUrl != "")
+                                  ? CircleAvatar(
+                                      radius: size.width * 0.11,
+                                      backgroundColor: Colors.grey,
+                                      backgroundImage:
+                                          NetworkImage(user.photoUrl),
+                                    )
+                                  : Image.asset(
+                                      "assets/images/defaultProfileImage.png",
+                                      width: size.width * 0.23,
+                                      height: size.width * 0.23,
+                                      fit: BoxFit.fitHeight),
+                              Expanded(
+                                flex: 1,
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                        buildProfileFollowButton(context)
-                                      ]),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: const EdgeInsets.only(top: 15.0),
-                            child: Text(
-                              user.bio,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            )),
-                      ],
+                                        buildStatColumn("posts", postCount),
+                                        buildStatColumn("followers",
+                                            _countFollowings(user.followers)),
+                                        buildStatColumn("following",
+                                            _countFollowings(user.following)),
+                                      ],
+                                    ),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          buildProfileFollowButton(context)
+                                        ]),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          Container(
+                              alignment: Alignment.centerLeft,
+                              padding: const EdgeInsets.only(top: 15.0),
+                              child: Text(
+                                user.bio,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )),
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(),
-                  buildImageViewButtonBar(),
-                  Divider(height: 0.0),
-                  buildUserPosts(),
-                ],
-              ));
+                    Divider(),
+                    buildImageViewButtonBar(),
+                    Divider(height: 0.0),
+                    buildUserPosts(),
+                  ],
+                ));
+          }
         });
   }
 }

@@ -55,7 +55,22 @@ class Body extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    //
+                    if (emailController.value.text == "") {
+                      Fluttertoast.showToast(
+                          msg: "Please enter your email address");
+                    } else {
+                      if (RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(emailController.value.text)) {
+                        FirebaseAuth.instance
+                            .sendPasswordResetEmail(
+                                email: emailController.value.text)
+                            .whenComplete(() => Fluttertoast.showToast(
+                                msg: "Password reset email sent"));
+                      } else {
+                        Fluttertoast.showToast(msg: "Email is invalid");
+                      }
+                    }
                   },
                   child: Text(
                     "Forgot Password?",
@@ -261,12 +276,34 @@ class Body extends StatelessWidget {
     if (user == null) {
       return null;
     }
+
+    DocumentSnapshot ds = await FirebaseFirestore.instance
+        .collection('unverifiedUsers')
+        .doc(user.uid)
+        .get();
+
+    if (ds.exists) {
+      await FirebaseFirestore.instance
+          .collection('unverifiedUsers')
+          .doc(user.uid)
+          .get()
+          .then((value) => FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set(value.data()));
+    }
+
     DocumentSnapshot userRecord = await ref.doc(user.uid).get();
     if (userRecord.data() != null) {
       userRecord = await ref.doc(user.uid).get();
     }
 
     currentUserModel = AppUser.fromDocument(userRecord);
+
+    FirebaseFirestore.instance
+        .collection('unverifiedUsers')
+        .doc(user.uid)
+        .delete();
     //print("current user model " + currentUserModel.id + currentUserModel.displayName);
   }
 }
