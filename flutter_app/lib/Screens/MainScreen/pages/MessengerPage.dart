@@ -79,6 +79,8 @@ class MessengerPageState extends State<MessengerPage>
                 icon: '@mipmap/ic_launcher')));
   }
 
+  int lastMessageTimeStamp = DateTime.now().millisecondsSinceEpoch;
+
   @override
   void dispose() {
     listScrollController.removeListener(scrollListener);
@@ -159,15 +161,16 @@ class MessengerPageState extends State<MessengerPage>
                                         currentUserModel.id)
                                     ? ""
                                     : "You: ";
-
-                            if (DateTime.now().millisecondsSinceEpoch <=
-                                    (int.parse(snapshot.data.docs[0]
-                                            .data()['timestamp']) +
-                                        5000) &&
-                                snapshot.data.docs[0].data()['idFrom'] !=
-                                    currentUserModel.id &&
-                                currentUserModel.chattingWith != peerId) {
-                              showNotification();
+                            if (int.parse(
+                                    snapshot.data.docs[0].data()['timestamp']) >
+                                lastMessageTimeStamp) {
+                              lastMessageTimeStamp = int.parse(
+                                  snapshot.data.docs[0].data()['timestamp']);
+                              if (snapshot.data.docs[0].data()['idFrom'] !=
+                                      currentUserModel.id &&
+                                  currentUserModel.chattingWith != peerId) {
+                                showNotification();
+                              }
                             }
 
                             return Container(
