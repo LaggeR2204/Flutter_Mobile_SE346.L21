@@ -290,7 +290,7 @@ void postToFireStore(
 }
 */
 import 'dart:io';
-
+import 'package:photo_manager/photo_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -316,7 +316,47 @@ class _UploadPageState extends State<UploadPage> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   bool uploading = false;
+  List<AssetEntity> _selectedList = [];
+  List<Widget> _photoList = [];
+  int currentPage = 0;
+  int lastPage;
+  int maxSelection = 1;
+  _handleScrollEvent(ScrollNotification scroll) {
+    if (scroll.metrics.pixels / scroll.metrics.maxScrollExtent > 0.33) {
+      if (currentPage != lastPage) {
+        _fetchPhotos();
+      }
+    }
+  }
+  _fetchPhotos() async {
+    lastPage = currentPage;
+    var result = await PhotoManager.requestPermission();
+    if (result) {
+      //load the album list
+      List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+          onlyAll: true, type: RequestType.image);
+      List<AssetEntity> media =
+      await albums[0].getAssetListPaged(currentPage, 60);
+      List<Widget> temp = [];
+      for (var asset in media) {
+        temp.add(
+          PhotoPickerItem(
+              asset: asset,
+              onSelect: (AssetEntity asset) {
 
+                _getFile(asset) ;
+              }),
+        );
+      }
+      setState(() {
+        _photoList.addAll(temp);
+        currentPage++;
+      });
+    } else {
+      // fail
+      /// if result is fail, you can call `PhotoManager.openSetting();`  to open android/ios applicaton's setting to get permission
+    }
+  }
   @override
   initState() {
     //variables with location assigned as 0.0
@@ -324,6 +364,7 @@ class _UploadPageState extends State<UploadPage> {
     currentLocation['longitude'] = 0.0;
     initPlatformState(); //method to call location
     super.initState();
+    _fetchPhotos();
   }
 
   //method to get Location and save into variables
@@ -361,6 +402,7 @@ class _UploadPageState extends State<UploadPage> {
                     text: "Take a photo",
                     press: () async {
                       Navigator.pop(context);
+
                       PickedFile imageFile = await imagePicker.getImage(
                           source: ImageSource.camera,
                           maxWidth: 1920,
@@ -442,7 +484,20 @@ class _UploadPageState extends State<UploadPage> {
                 )
               ],
             ),
-          )
+            body:  NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scroll) {
+                _handleScrollEvent(scroll);
+                return;
+              },
+              child: GridView.builder(
+                  itemCount: _photoList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, crossAxisSpacing: 2, mainAxisSpacing: 2),
+                  itemBuilder: (BuildContext context, int index) {
+                    return _photoList[index];
+                  }),
+            ))
+
         : Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
@@ -462,15 +517,34 @@ class _UploadPageState extends State<UploadPage> {
                 ),
                 actions: <Widget>[
                   FlatButton(
-                    onPressed: postImage,
-                    child: Text(
+                      onPressed: () {
+                        setState(() {
+                          uploading = true;
+                        });
+                        uploadImage(file).then((String data) {
+                          postToFireStore(
+                              mediaUrl: data,
+                              description: descriptionController.text,
+                              location: locationController.text);
+                        }).then((_) {
+                          setState(() {
+                            file = null;
+                            uploading = false;
+                          });
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: IconButton(
+                          icon: Icon(Icons.send,
+                              color: Colors
+                                  .white)) /*Text(
                       "Post",
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0),
-                    ),
-                  )
+                    ),*/
+                      )
                 ]),
             body: ListView(
               children: <Widget>[
@@ -500,7 +574,12 @@ class _UploadPageState extends State<UploadPage> {
             ),
           );
   }
-
+  _getFile(AssetEntity asset) async {
+    File temp = await asset.file;
+    setState(() {
+      file = temp;
+    });
+  }
   buildLocationButton(String locationName) {
     if (locationName != null ?? locationName.isNotEmpty) {
       return InkWell(
@@ -531,12 +610,12 @@ class _UploadPageState extends State<UploadPage> {
     }
   }
 
-  /* void clearImage() {
+/* void clearImage() {
     setState(() {
       file = null;
     });
   }*/
-
+/*
   void postImage() {
     setState(() {
       uploading = true;
@@ -552,8 +631,11 @@ class _UploadPageState extends State<UploadPage> {
         uploading = false;
       });
     });
-  }
+
+  }*/
 }
+
+
 
 class PostForm extends StatelessWidget {
   final imageFile;
@@ -647,4 +729,47 @@ void postToFireStore(
     String docId = doc.id;
     reference.doc(docId).update({"postId": docId});
   });
+}
+class PhotoPickerItem extends StatefulWidget {
+
+  final AssetEntity asset;
+  final bool Function(AssetEntity asset) onSelect;
+
+  const PhotoPickerItem({this.asset, this.onSelect});
+
+  @override
+  _PhotoPickerItemState createState() => _PhotoPickerItemState();
+}
+
+class _PhotoPickerItemState extends State<PhotoPickerItem> {
+  bool isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: widget.asset.thumbDataWithSize(200, 200),
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done)
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                // isSelected = !isSelected;
+                isSelected = widget.onSelect(widget.asset);
+              });
+            },
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: Image.memory(
+                    snapshot.data,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+          );
+        return Container();
+      },
+    );
+  }
 }

@@ -208,7 +208,6 @@ class TimelinePageState extends State<TimelinePage>
     var snapshots = FirebaseFirestore.instance
         .collection('posts')
         .where('ownerId', whereIn: followingsList)
-
         .snapshots();
     return snapshots.map((snapshot) => snapshot.docs
         .map(
