@@ -144,7 +144,7 @@ class Body extends StatelessWidget {
       showDialog(
         context: context,
         builder: (_) => new AlertDialog(
-          title: new Text("ERROR!!!"),
+          title: new Text("NOTIFICATION!!!"),
           content: new Text("Sign up success, verify your email before login"),
           actions: <Widget>[
             FlatButton(
@@ -255,6 +255,7 @@ class Body extends StatelessWidget {
         "followers": {},
         "following": {},
         "chatWiths": {},
+        "chattingWith": null,
         "searchRecent": []
       });
     }

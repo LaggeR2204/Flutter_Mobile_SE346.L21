@@ -291,6 +291,10 @@ class Body extends StatelessWidget {
               .collection('users')
               .doc(user.uid)
               .set(value.data()));
+      await FirebaseFirestore.instance
+          .collection('unverifiedUsers')
+          .doc(user.uid)
+          .delete();
     }
 
     DocumentSnapshot userRecord = await ref.doc(user.uid).get();
@@ -299,11 +303,8 @@ class Body extends StatelessWidget {
     }
 
     currentUserModel = AppUser.fromDocument(userRecord);
-
-    FirebaseFirestore.instance
-        .collection('unverifiedUsers')
-        .doc(user.uid)
-        .delete();
-    //print("current user model " + currentUserModel.id + currentUserModel.displayName);
+    print("[current user model] " +
+        currentUserModel.id +
+        currentUserModel.displayName);
   }
 }
