@@ -79,6 +79,8 @@ class MessengerPageState extends State<MessengerPage>
                 icon: '@mipmap/ic_launcher')));
   }
 
+  int lastMessageTimeStamp = DateTime.now().millisecondsSinceEpoch;
+
   @override
   void dispose() {
     listScrollController.removeListener(scrollListener);
