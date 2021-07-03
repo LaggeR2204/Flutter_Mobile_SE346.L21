@@ -159,7 +159,6 @@ class MessengerPageState extends State<MessengerPage>
                                         currentUserModel.id)
                                     ? ""
                                     : "You: ";
-
                             if (DateTime.now().millisecondsSinceEpoch <=
                                     (int.parse(snapshot.data.docs[0]
                                             .data()['timestamp']) +
