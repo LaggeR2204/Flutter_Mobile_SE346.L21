@@ -113,7 +113,7 @@ class NotificationsPageState extends State<NotificationsPage>
               }
 
               snapshot.data.docs[0].data()['type'] == "like";
-              showPushNotification();
+              if (!isMute) showPushNotification();
               return ListView.builder(
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
