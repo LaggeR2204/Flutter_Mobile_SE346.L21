@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Screens/MainScreen/pages/ProfilePage.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/Post.dart';
@@ -171,14 +172,12 @@ class NotificationItems extends StatelessWidget {
   final String userProfileImg;
   final String commentData;
   final String userName;
-  final ImagePost post;
 
   NotificationItems(
       {this.mediaUrl,
       this.postId,
       this.timestamp,
       this.type,
-      this.post,
       this.userId,
       this.userProfileImg,
       this.commentData,
@@ -196,10 +195,19 @@ class NotificationItems extends StatelessWidget {
       userProfileImg: doc.data()['userProfileImg'],
     );
   }
-  mediaReviewConfig() {
+  getImagePostbyId(postId) async {
+    ImagePost post;
+    var snap =
+        await FirebaseFirestore.instance.collection('posts').doc(postId).get();
+    post = ImagePost.fromDocument(snap);
+    imagePost = post;
+  }
+
+  mediaReviewConfig(context) {
+    getImagePostbyId(postId);
     if (type == "like" || type == "comment") {
       mediaPreview = GestureDetector(
-        onTap: () => print('showing post'),
+        onTap: () => openImagePost(context, imagePost),
         child: Container(
           height: 50.0,
           width: 50.0,
@@ -231,14 +239,14 @@ class NotificationItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    mediaReviewConfig();
+    mediaReviewConfig(context);
     return Padding(
         padding: EdgeInsets.only(bottom: 2.0),
         child: Container(
           color: Colors.white60,
           child: ListTile(
             title: GestureDetector(
-              onTap: () => print("profile"),
+              onTap: () => openProfile(context, userId),
               child: RichText(
                 overflow: TextOverflow.ellipsis,
                 text: TextSpan(
