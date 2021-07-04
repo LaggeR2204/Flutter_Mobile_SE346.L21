@@ -71,6 +71,7 @@ class NotificationsPageState extends State<NotificationsPage>
   }
 
   void showPushNotification() {
+    isNotiShow = true;
     flutterLocalNotificationsPlugin.show(
         0,
         "LevArt Notification",
@@ -85,6 +86,8 @@ class NotificationsPageState extends State<NotificationsPage>
   }
 
   List<NotificationItems> listNoti = [];
+  bool isNotiShow = false;
+  int lastNoti = DateTime.now().microsecondsSinceEpoch;
   buildNotifications() {
     return Container(
       child: StreamBuilder(
@@ -95,26 +98,29 @@ class NotificationsPageState extends State<NotificationsPage>
               .orderBy("timestamp", descending: true)
               .snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData)
+            if (!snapshot.hasData || snapshot.data.docs.length == 0)
               return Container(
                   alignment: FractionalOffset.center,
                   padding: const EdgeInsets.only(top: 10.0),
                   child: CircularProgressIndicator());
             else {
-              switch (snapshot.data.docs[0].data()['type']) {
-                case "like":
-                  pushNotiContext = "someone liked your post.";
-                  break;
-                case "comment":
-                  pushNotiContext = "someone commented to your post.";
-                  break;
-                case "follow":
-                  pushNotiContext = "someone is following you.";
-                  break;
+              Timestamp temp = snapshot.data.docs[0].data()['timestamp'];
+              if (temp.microsecondsSinceEpoch > lastNoti) {
+                isNotiShow = false;
+                lastNoti = temp.microsecondsSinceEpoch;
+                switch (snapshot.data.docs[0].data()['type']) {
+                  case "like":
+                    pushNotiContext = "someone liked your post.";
+                    break;
+                  case "comment":
+                    pushNotiContext = "someone commented to your post.";
+                    break;
+                  case "follow":
+                    pushNotiContext = "someone is following you.";
+                    break;
+                }
               }
-
-              snapshot.data.docs[0].data()['type'] == "like";
-              if (!isMute) showPushNotification();
+              if (!isMute && !isNotiShow) showPushNotification();
               return ListView.builder(
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
